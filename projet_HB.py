@@ -19,6 +19,8 @@ from mpl_toolkits.basemap import Basemap
 import math
 import netCDF4 as nc
 
+print("Bonjour")
+
 # Specify the file path
 file_path = '/Users/titouanrenaud/Documents/M2 ECLAT/STATISTIQUES/PROJET HB/MesoNH-ice3_CADDIWAF7_1km_projectHB.nc'
 # Open the NetCDF file
