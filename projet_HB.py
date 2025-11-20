@@ -7,20 +7,20 @@ Created on Fri Nov 14 09:50:30 2025
 """
 
 import os
-os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2025/bin/universal-darwin'
+#os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2025/bin/universal-darwin'
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 from matplotlib import rc
 rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
-rc('text', usetex=True)
+rc('text', usetex=False)
 from mpl_toolkits.basemap import Basemap
 import math
 import netCDF4 as nc
 
 # Specify the file path
-file_path = '/Users/titouanrenaud/Documents/M2 ECLAT/STATISTIQUES/PROJET HB/MesoNH-ice3_CADDIWAF7_1km_projectHB.nc'
+file_path = '../2526/MesoNH-ice3_CADDIWAF7_1km_projectHB.nc'
 # Open the NetCDF file
 ds = nc.Dataset(file_path)
 
@@ -40,7 +40,7 @@ aos_3255BT3 = ds.variables['aos_3255BT'][3,:,:]
 plt.figure(layout='constrained')
 
 plt.imshow(aos_3255BT1-aos_3255BT0, origin='lower')
-plt.colorbar(label=r'aos_325TBT')
+plt.colorbar(label='aos_325TBT')
 
 plt.show()
 
@@ -60,5 +60,5 @@ map.shadedrelief()
 x, y = map(longitude, latitude)
 
 plt.scatter(x, y, 1, marker='o', color='red', alpha=0.008)
-
+plt.show()
 #%%
