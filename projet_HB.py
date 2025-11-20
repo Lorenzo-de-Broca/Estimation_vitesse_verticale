@@ -24,7 +24,7 @@ file_path = '/Users/titouanrenaud/Documents/M2 ECLAT/STATISTIQUES/PROJET HB/Meso
 # Open the NetCDF file
 ds = nc.Dataset(file_path)
 
-#%% 
+#%% Plot one image
 
 longitude = ds.variables['longitude'][:]
 latitude = ds.variables['latitude'][:]
@@ -39,8 +39,19 @@ aos_3255BT3 = ds.variables['aos_3255BT'][3,:,:]
 
 plt.figure(layout='constrained')
 
+plt.imshow(aos_3255BT0, origin='lower')
+plt.colorbar(label=r'aos_325TBT')
+plt.title('t=0')
+
+plt.show()
+
+#%%Plot first difference
+
+plt.figure(layout='constrained')
+
 plt.imshow(aos_3255BT1-aos_3255BT0, origin='lower')
 plt.colorbar(label=r'aos_325TBT')
+plt.title('t1-t0')
 
 plt.show()
 
