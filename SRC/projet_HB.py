@@ -24,7 +24,7 @@ file_path = '../2526/MesoNH-ice3_CADDIWAF7_1km_projectHB.nc'
 # Open the NetCDF file
 ds = nc.Dataset(file_path)
 
-#%% 
+#%% Plot one image
 
 longitude = ds.variables['longitude'][:]
 latitude = ds.variables['latitude'][:]
@@ -36,15 +36,59 @@ aos_325TBT = ds.variables['aos_325TBT'][0,:,:]
 aos_3255BT0 = ds.variables['aos_3255BT'][0,:,:]
 aos_3255BT1 = ds.variables['aos_3255BT'][1,:,:]
 aos_3255BT3 = ds.variables['aos_3255BT'][3,:,:]
+W_at_BT = ds.variables['W_at_BT'][:,:,:]
+
+def extract_data(path):
+    ds = nc.Dataset(path)
+    frame = {'time': ds.variables['time'][:],
+             'longitude': ds.variables['longitude'][:],
+             'lattitude': ds.variables['latitude'][:],
+             'ni': ds.variables['ni'][:],
+             'nj': ds.variables['nj'][:],
+             'aos_1830BT': ds.variables['aos_1830BT'][:],
+             'aos_1833BT': ds.variables['aos_1833BT'][:],
+             'aos_1835BT': ds.variables['aos_1835BT'][:],
+             'aos_1837BT': ds.variables['aos_1837BT'][:],
+             'aos_183TBT': ds.variables['aos_183TBT'][:],
+             'aos_3250BT': ds.variables['aos_3250BT'][:],
+             'aos_3253BT': ds.variables['aos_3253BT'][:],
+             'aos_3255BT': ds.variables['aos_3255BT'][:],
+             'aos_3257BT': ds.variables['aos_3257BT'][:],
+             'aos_325TBT': ds.variables['aos_325TBT'][:],
+             'W_at_BT': ds.variables['W_at_BT'][:]}
+    
+    return frame
+
+
+
+plt.figure(layout='constrained')
+
+plt.imshow(aos_3255BT0, origin='lower')
+plt.colorbar(label='aos_325TBT')
+plt.title('t=0')
+
+plt.show()
+
+
+plt.figure(layout='constrained')
+
+plt.imshow(W_at_BT[30,:,:], origin='lower')
+plt.colorbar(label='W_at_BT')
+plt.title('t=0')
+
+plt.show()
+
+#%%Plot first difference
 
 plt.figure(layout='constrained')
 
 plt.imshow(aos_3255BT1-aos_3255BT0, origin='lower')
 plt.colorbar(label='aos_325TBT')
+plt.title('t1-t0')
 
 plt.show()
 
-#%%
+#%%b map position scans
 
 plt.figure(layout='constrained')
 map = Basemap(projection='merc', llcrnrlat=min(latitude[:,0])-25, urcrnrlat=max(latitude[:,0])+25,
