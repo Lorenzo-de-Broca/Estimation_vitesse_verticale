@@ -1,0 +1,21 @@
+# Exemple de `paths.example.yaml`
+# Copiez ce fichier en `paths.yaml` et adaptez les chemins à votre machine.
+# NE PAS committer votre `inputs/paths.yaml` personnel (il est dans .gitignore).
+
+# Racine des données
+data_root: "C:/chemin/vers/donnees"
+
+# Fichiers spécifiques
+data_file: "${data_root}/2526/MesoNH-ice3_CADDIWAF7_1km_projectHB.nc"
+
+# Dossiers pour les données intermédiaires/traitées
+raw_dir: "${data_root}/raw"
+processed_dir: "${data_root}/processed"
+
+# Exemple d'option: format des fichiers
+nc_pattern: "*.nc"
+
+# Instructions:
+# 1) Copier ce fichier: `cp inputs/paths.example.yaml inputs/paths.yaml`
+# 2) Modifier `inputs/paths.yaml` pour pointer vers vos dossiers locaux.
+# 3) Ne pas ajouter `inputs/paths.yaml` au dépôt (il est listé dans .gitignore).
