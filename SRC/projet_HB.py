@@ -7,14 +7,11 @@ Created on Fri Nov 14 09:50:30 2025
 """
 
 import os
-#os.environ["PATH"] += os.pathsep + '/usr/local/texlive/2025/bin/universal-darwin'
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 from matplotlib import rc
-rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
-rc('text', usetex=False)
 from mpl_toolkits.basemap import Basemap
 import math
 import netCDF4 as nc

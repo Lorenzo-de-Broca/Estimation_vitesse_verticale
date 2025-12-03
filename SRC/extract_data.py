@@ -9,8 +9,10 @@ Script to extract data from netCDF file and return a dictionnary with nd-arrays.
 """
 
 import netCDF4 as nc
+import yaml
+from pathlib import Path
 
-def extract_data(path: str):
+def extract_data():
     """
     Parameters
     ----------
@@ -27,6 +29,16 @@ def extract_data(path: str):
         - W_at_BT: vertical velocity (88, 500, 500)
 
     """
+
+    base_dir = Path(__file__).resolve().parent.parent
+
+    # path to path.yaml
+    path_yaml = base_dir / "inputs/paths.yaml"
+
+    with open(path_yaml, 'r') as f:
+        path = yaml.safe_load(f)
+    
+    path = path["data_file"]
     
     ds = nc.Dataset(path)
     frame = {'time': ds.variables['time'][:],
