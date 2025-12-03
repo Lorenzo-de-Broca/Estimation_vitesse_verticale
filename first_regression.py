@@ -39,7 +39,7 @@ y_data = frame['W_at_BT'][0,:,:][np.nonzero(train_matrix)]
 m, b = fit_line(x_data, y_data)
 
 plt.figure(layout='constrained')
-plt.yscale('log')
+plt.xscale('log')
 plt.plot(x_data, y_data, 'b.', label='data points')
 plt.plot(x_data, linear(x_data, m, b), 'r-', label='fitted line')
 plt.xlabel(r'$\Delta$ aos_1830BT')
