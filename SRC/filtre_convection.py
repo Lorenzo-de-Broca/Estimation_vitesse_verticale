@@ -19,6 +19,8 @@ def create_convection_filter():
 
 
 # %% figure test
+filter = create_convection_filter()
+
 fig, ax = plt.subplots(3,3, layout='constrained')
 ax[0,0].imshow(filter[0,:,:], origin='lower', cmap='Greys',  interpolation='nearest')
 ax[0,0].set_title('t=0')
