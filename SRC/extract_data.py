@@ -40,6 +40,16 @@ def extract_data():
     
     path = path["data_file"]
     
+    base_dir = Path(__file__).resolve().parent.parent
+
+    # path to path.yaml
+    path_yaml = base_dir / "inputs/paths.yaml"
+
+    with open(path_yaml, 'r') as f:
+        path = yaml.safe_load(f)
+    
+    path = path['data_file']
+
     ds = nc.Dataset(path)
     frame = {'time': ds.variables['time'][:],
              'longitude': ds.variables['longitude'][:],
