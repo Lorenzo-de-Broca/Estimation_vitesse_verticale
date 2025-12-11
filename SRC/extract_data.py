@@ -17,8 +17,6 @@ def extract_data():
     """
     Parameters
     ----------
-    path : str
-        path where to find the netCDF «MesoNH-ice3_CADDIWAF7_1km_projectHB.nc» file
 
     Returns
     -------
