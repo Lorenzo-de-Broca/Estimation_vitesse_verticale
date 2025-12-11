@@ -1,22 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from SRC.extract_data import extract_data
-from SRC.filtre_convection import create_convection_filter
 from scipy.optimize import curve_fit
 import matplotlib as mpl
 
+from SRC.extract_data import extract_data
+from SRC.filtre_convection import create_convection_filter
+from SRC.function import *
+
 frame = extract_data()
 filter = create_convection_filter()
-
-# %% defining functions for manovariable regression
-def linear(x, m, b): # linear function
-    return m*x + b
-
-def exponential(x, a, b, c): # exponential function
-    return a * np.exp(b * x) + c
-
-def logarithmic(x, a, b): # logarithmic function
-    return a * np.log(x) + b    
 
 # %% train & test matrix
 total_len = 500*500
@@ -45,7 +37,7 @@ norm1 = mpl.colors.Normalize(vmin=-0.3, vmax=0.1)
 cmapb = mpl.colors.ListedColormap(['None','black','None'])
 cmapw = mpl.colors.ListedColormap(['None','white','None'])
 bounds=[-1,-0.1,0.1,1]
-norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+norm = mpl.colors.BoundaryNorm(bounds, cmapb.N)
 plt.imshow(x_data[t,:,:], origin='lower', cmap='viridis', norm=norm1)
 plt.colorbar()
 plt.imshow(train_matrix, origin='lower', cmap=cmapb, norm=norm)

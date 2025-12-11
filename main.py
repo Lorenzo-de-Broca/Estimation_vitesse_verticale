@@ -23,11 +23,11 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
     print(f"Loading paths configuration from file : {paths_file}")
     paths = load_input(paths_file)
 
-    data_path = paths["data_path"]
+    data_path = paths["data_file"]
 
     # Extraction des données
     print(f"Extraction of data from file : {data_path}")
-    data = extract_data(data_path)
+    data = extract_data()
     print(data['time'])
     print("Data extracted successfully.")
     
