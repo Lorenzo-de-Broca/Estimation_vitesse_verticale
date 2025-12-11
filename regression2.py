@@ -33,20 +33,23 @@ for t in range(87):
     x_data[t,:,:] = (frame['aos_1830BT'][t+1,:,:]-frame['aos_1830BT'][t,:,:])*filter[t,:,:]*filter[t+1,:,:]*train_matrix/30
 
 
-x_data = x_data[np.nonzero(x_data)]
+x_data_filtered = x_data[np.nonzero(x_data)]
 
 y_data = frame['W_at_BT']*filter*train_matrix
-
-
+y_data_filtered = y_data[np.nonzero(y_data)]
 
 # %% 
-t=50
+t=0
 plt.figure()
 norm1 = mpl.colors.Normalize(vmin=-0.3, vmax=0.1)
-cmap = mpl.colors.ListedColormap(['None','black','None'])
+cmapb = mpl.colors.ListedColormap(['None','black','None'])
+cmapw = mpl.colors.ListedColormap(['None','white','None'])
 bounds=[-1,-0.1,0.1,1]
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 plt.imshow(x_data[t,:,:], origin='lower', cmap='viridis', norm=norm1)
 plt.colorbar()
-plt.imshow(filter[t,:,:]*filter[t+1,:,:]*train_matrix, origin='lower', cmap=cmap, norm=norm)
+plt.imshow(train_matrix, origin='lower', cmap=cmapb, norm=norm)
+plt.imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapw, norm=norm)
 plt.title(f'Training data points overlayed on Δaos_1830BT at t={t}')
+
+# %% fitting
