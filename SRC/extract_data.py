@@ -55,7 +55,7 @@ def extract_data():
              'aos_3255BT': np.array(ds.variables['aos_3255BT'][:]),
              'aos_3257BT': np.array(ds.variables['aos_3257BT'][:]),
              'aos_325TBT': np.array(ds.variables['aos_325TBT'][:]),
-             'W_at_BT': np.array(ds.variables['W_at_BT'][:])}
+             'W_at_BT': ds.variables['W_at_BT'][:]}
     
     return frame
 

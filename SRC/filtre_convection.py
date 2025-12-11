@@ -15,6 +15,8 @@ def create_convection_filter():
     filter = np.ones(np.shape(p1))
     filter[p1>p7] = 0
 
+    filter = filter*(np.ones(np.shape(p1))-np.ma.getmask(frame['W_at_BT']))
+
     return filter
 
 
