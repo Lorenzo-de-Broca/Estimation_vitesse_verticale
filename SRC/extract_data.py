@@ -85,6 +85,7 @@ def create_reg_arrays1(freq, frame, filter):
     print(f"x_data_filtered shape for freq {freq}: {x_data_filtered.shape}")
     y_data = frame['W_at_BT'][:87,:,:]
     y_data_filtered = y_data[np.nonzero(filter)]
+
     
     return x_data_filtered, y_data_filtered
 
