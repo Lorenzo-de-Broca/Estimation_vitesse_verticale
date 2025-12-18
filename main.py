@@ -5,7 +5,8 @@ import argparse
 import sys
 import yaml
 
-from SRC.extract_data import extract_data
+from SRC.extract_data import extract_data, create_combined_regression_array
+from SRC.filtre_convection import create_convection_filter
 
 def load_input(file_path):
     with open(file_path, 'r') as f:
@@ -31,6 +32,18 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
     print(data['time'])
     print("Data extracted successfully.")
     
+    # Filtrage des données pour éviter les zones de convetion    
+    print("Creating a filter ...")
+    filter = create_convection_filter()
+    print("Filter created successfully.")
+    
+    print("Filter the data and create regression arrays")
+    
+    x_data, y_data = create_combined_regression_array (data, filter)
+    print("Regression arrays created.") 
+    print(f"x_data shape: {x_data.shape}")
+    print(f"y_data shape: {y_data.shape}") 
+
     
 
 if __name__ == "__main__":
