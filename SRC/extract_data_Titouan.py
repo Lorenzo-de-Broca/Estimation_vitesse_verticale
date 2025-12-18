@@ -13,7 +13,6 @@ import yaml
 from pathlib import Path
 import numpy as np
 
-
 def extract_data():
     """
     Parameters
@@ -84,37 +83,69 @@ def create_reg_arrays1(freq, frame, filter):
         x_data[t,:,:] = (frame[f'aos_{freq}BT'][t+1,:,:]-frame[f'aos_{freq}BT'][t,:,:])/30
         index_filter = filter[t,:,:]*filter[t+1,:,:]
 
-    x_data_filtered = x_data[np.nonzero(filter)]
-    print(f"x_data shape for freq {freq}: {x_data.shape}")
-    print(f"x_data_filtered shape for freq {freq}: {x_data_filtered.shape}")
-    y_data = frame['W_at_BT'][:87,:,:]
-    y_data_filtered = y_data[np.nonzero(filter)]
+    x_data_filtered = x_data[np.nonzero(index_filter)]
 
-    
+    y_data = frame['W_at_BT'][:87,:,:]
+    y_data_filtered = y_data[np.nonzero(index_filter)]
+
     return x_data_filtered, y_data_filtered
 
-def create_combined_regression_array(frame,filter):
+def create_reg_array2(freq, frame, filter, train_matrix):
     """
-    This function create a matrix containing filtered datas of all differents experimental measurement in order to compute PCA or covariance for instance
+    Create arrays of Delta_TB filtered by convection filter and training
+
+    Parameters
+    ----------
+    freq : str
+        frequency channel among ['1830', '1833', '1835', '1837', '183T', '3250', '3253', '3255', '3257', '325T']
+
+    Returns
+    -------
+    x_data : np.ndarray
+        1D array of shape (N,) with Δaos_freqBT/30s filtered
+    y_data : np.ndarray
+        1D array of shape (N,) with W_at_BT filtered
 
     """
-    freqs = ['1830', '1833', '1835', '1837', '183T', '3250', '3253', '3255', '3257', '325T']
-    
-    combined_x, combined_y = create_reg_arrays1(freqs[0], frame, filter)
-    
-    n_line = np.shape(combined_x)[0]
+        
+    x_data = np.zeros((87, 500, 500))
+    index_filter = np.nonzero((87, 500, 500))
+    for t in range(87):
+        x_data[t,:,:] = (frame[f'aos_{freq}BT'][t+1,:,:]-frame[f'aos_{freq}BT'][t,:,:])/30
+        index_filter = filter[t,:,:]*filter[t+1,:,:]*train_matrix
 
-    combined_x = combined_x.reshape(n_line,1)
-    combined_y = combined_y.reshape(n_line,1)
-    
-    for f in freqs[1:] :
-        x_filtered, y_filtered = create_reg_arrays1(f,frame,filter)
-        combined_x = np.append(combined_x, x_filtered.reshape(n_line,1),axis=1)
-        combined_y = np.append(combined_y, y_filtered.reshape(n_line,1),axis=1)
+    x_data_filtered = x_data[np.nonzero(index_filter)]
 
-    return combined_x, combined_y
+    y_data = frame['W_at_BT'][:87,:,:]
+    y_data_filtered = y_data[np.nonzero(index_filter)]
 
-if __name__ == "__main__":
-    frame = extract_data()
-    print("Data extracted from netCDF file.")
-    
+    return x_data_filtered, y_data_filtered
+
+def create_reg_array3(freq, frame, filter, train_matrix):
+    """
+    Create arrays of raw TB filtered by convection filter and training
+
+    Parameters
+    ----------
+    freq : str
+        frequency channel among ['1830', '1833', '1835', '1837', '183T', '3250', '3253', '3255', '3257', '325T']
+
+    Returns
+    -------
+    x_data : np.ndarray
+        1D array of shape (N,) with Δaos_freqBT/30s filtered
+    y_data : np.ndarray
+        1D array of shape (N,) with W_at_BT filtered
+
+    """
+        
+    index_filter = np.nonzero((88, 500, 500))
+    for t in range(88):
+        index_filter = filter[t,:,:]*filter[t+1,:,:]*train_matrix
+
+    x_data_filtered = frame[f'aos_{freq}BT'][np.nonzero(index_filter)]
+
+    y_data = frame['W_at_BT'][:87,:,:]
+    y_data_filtered = y_data[np.nonzero(index_filter)]
+
+    return x_data_filtered, y_data_filtered

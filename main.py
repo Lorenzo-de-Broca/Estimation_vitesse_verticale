@@ -5,7 +5,7 @@ import argparse
 import sys
 import yaml
 
-from SRC.extract_data import extract_data
+from extract_data_Titouan import extract_data
 
 def load_input(file_path):
     with open(file_path, 'r') as f:
