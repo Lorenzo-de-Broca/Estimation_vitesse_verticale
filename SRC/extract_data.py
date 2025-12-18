@@ -61,6 +61,8 @@ def extract_data():
 
 def create_reg_arrays1(freq, frame, filter):
     """
+    Create arrays of Delta_TB filtered by convection filter only
+
     Parameters
     ----------
     freq : str
@@ -74,15 +76,76 @@ def create_reg_arrays1(freq, frame, filter):
         1D array of shape (N,) with W_at_BT filtered
 
     """
-    
+        
     x_data = np.zeros((87, 500, 500))
+    index_filter = np.nonzero((87, 500, 500))
     for t in range(87):
-        x_data[t,:,:] = (frame[f'aos_{freq}BT'][t+1,:,:]-frame[f'aos_{freq}BT'][t,:,:])*filter[t,:,:]*filter[t+1,:,:]/30
+        x_data[t,:,:] = (frame[f'aos_{freq}BT'][t+1,:,:]-frame[f'aos_{freq}BT'][t,:,:])/30
+        index_filter = filter[t,:,:]*filter[t+1,:,:]
 
-    x_data_filtered = x_data[np.nonzero(x_data)]
+    x_data_filtered = x_data[np.nonzero(index_filter)]
 
     y_data = frame['W_at_BT'][:87,:,:]
-    y_data_filtered = y_data[np.nonzero(x_data)]
+    y_data_filtered = y_data[np.nonzero(index_filter)]
 
     return x_data_filtered, y_data_filtered
 
+def create_reg_array2(freq, frame, filter, train_matrix):
+    """
+    Create arrays of Delta_TB filtered by convection filter and training
+
+    Parameters
+    ----------
+    freq : str
+        frequency channel among ['1830', '1833', '1835', '1837', '183T', '3250', '3253', '3255', '3257', '325T']
+
+    Returns
+    -------
+    x_data : np.ndarray
+        1D array of shape (N,) with Δaos_freqBT/30s filtered
+    y_data : np.ndarray
+        1D array of shape (N,) with W_at_BT filtered
+
+    """
+        
+    x_data = np.zeros((87, 500, 500))
+    index_filter = np.nonzero((87, 500, 500))
+    for t in range(87):
+        x_data[t,:,:] = (frame[f'aos_{freq}BT'][t+1,:,:]-frame[f'aos_{freq}BT'][t,:,:])/30
+        index_filter = filter[t,:,:]*filter[t+1,:,:]*train_matrix
+
+    x_data_filtered = x_data[np.nonzero(index_filter)]
+
+    y_data = frame['W_at_BT'][:87,:,:]
+    y_data_filtered = y_data[np.nonzero(index_filter)]
+
+    return x_data_filtered, y_data_filtered
+
+def create_reg_array3(freq, frame, filter, train_matrix):
+    """
+    Create arrays of raw TB filtered by convection filter and training
+
+    Parameters
+    ----------
+    freq : str
+        frequency channel among ['1830', '1833', '1835', '1837', '183T', '3250', '3253', '3255', '3257', '325T']
+
+    Returns
+    -------
+    x_data : np.ndarray
+        1D array of shape (N,) with Δaos_freqBT/30s filtered
+    y_data : np.ndarray
+        1D array of shape (N,) with W_at_BT filtered
+
+    """
+        
+    index_filter = np.nonzero((88, 500, 500))
+    for t in range(88):
+        index_filter = filter[t,:,:]*filter[t+1,:,:]*train_matrix
+
+    x_data_filtered = frame[f'aos_{freq}BT'][np.nonzero(index_filter)]
+
+    y_data = frame['W_at_BT'][:87,:,:]
+    y_data_filtered = y_data[np.nonzero(index_filter)]
+
+    return x_data_filtered, y_data_filtered
