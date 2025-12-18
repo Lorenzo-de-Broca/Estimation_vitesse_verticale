@@ -5,7 +5,7 @@ import matplotlib as mpl
 
 from SRC.extract_data import extract_data
 from SRC.filtre_convection import create_convection_filter
-from SRC.function import *
+from SRC.utils import *
 
 frame = extract_data()
 filter = create_convection_filter()
