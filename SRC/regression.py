@@ -1,22 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from SRC.extract_data import extract_data, create_reg_arrays1
-from SRC.filtre_convection import create_convection_filter
 from scipy.optimize import curve_fit
 import matplotlib as mpl
 
+from SRC.extract_data import extract_data, create_reg_arrays1
+from SRC.filtre_convection import create_convection_filter
+from SRC.utils import *
+
+print("start")
 frame = extract_data()
-filter = create_convection_filter()
-
-# %% defining functions for manovariable regression
-def linear(x, m, b): # linear function
-    return m*x + b
-
-def exponential(x, a, b, c): # exponential function
-    return a * np.exp(b * x) + c
-
-def logarithmic(x, a, b): # logarithmic function
-    return a * np.log(x) + b    
+filter = create_convection_filter()   
 
 # %% train & test matrix
 total_len = 500*500
@@ -36,7 +29,7 @@ x_data_filtered = x_data[np.nonzero(x_data)]
 
 y_data = frame['W_at_BT'][:87,:,:]
 y_data_filtered = y_data[np.nonzero(x_data)]
-
+print("finish creation matrix")
 # %% 
 t=0
 plt.figure()
@@ -50,7 +43,7 @@ plt.colorbar()
 plt.imshow(train_matrix, origin='lower', cmap=cmapb, norm=norm)
 plt.imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapw, norm=norm)
 plt.title(f'Training data points overlayed on Δaos_1830BT at t={t}')
-
+print("begin fit")
 # %% fitting
 x_data_filtered1, y_data_filtered1 = create_reg_arrays1('1830', frame, filter)
 x_data_filtered7, y_data_filtered7 = create_reg_arrays1('1837', frame, filter)
@@ -83,3 +76,7 @@ plt.colorbar()
 plt.title(f'W_at_BT - Δaos_1830BT/30s at t={t}')
 plt.show()
 
+def PCA (): 
+    """Principal Component Analysis function to reduce the dimension of the problem.
+    """
+    pass
