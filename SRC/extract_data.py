@@ -55,7 +55,34 @@ def extract_data():
              'aos_3255BT': np.array(ds.variables['aos_3255BT'][:]),
              'aos_3257BT': np.array(ds.variables['aos_3257BT'][:]),
              'aos_325TBT': np.array(ds.variables['aos_325TBT'][:]),
-             'W_at_BT': np.array(ds.variables['W_at_BT'][:])}
+             'W_at_BT': ds.variables['W_at_BT'][:]}
     
     return frame
+
+def create_reg_arrays1(freq, frame, filter):
+    """
+    Parameters
+    ----------
+    freq : str
+        frequency channel among ['1830', '1833', '1835', '1837', '183T', '3250', '3253', '3255', '3257', '325T']
+
+    Returns
+    -------
+    x_data : np.ndarray
+        1D array of shape (N,) with Δaos_freqBT/30s filtered
+    y_data : np.ndarray
+        1D array of shape (N,) with W_at_BT filtered
+
+    """
+    
+    x_data = np.zeros((87, 500, 500))
+    for t in range(87):
+        x_data[t,:,:] = (frame[f'aos_{freq}BT'][t+1,:,:]-frame[f'aos_{freq}BT'][t,:,:])*filter[t,:,:]*filter[t+1,:,:]/30
+
+    x_data_filtered = x_data[np.nonzero(x_data)]
+
+    y_data = frame['W_at_BT'][:87,:,:]
+    y_data_filtered = y_data[np.nonzero(x_data)]
+
+    return x_data_filtered, y_data_filtered
 
