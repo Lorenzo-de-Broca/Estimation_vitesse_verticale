@@ -190,7 +190,7 @@ def create_combined_regression_array(frame,filter):
     """
     freqs = ['1830', '1833', '1835', '1837', '183T', '3250', '3253', '3255', '3257', '325T']
     
-    combined_x, combined_y = create_reg_arrays1(freqs[0], frame, filter)
+    combined_x, combined_y = create_reg_array1(freqs[0], frame, filter)
     
     n_line = np.shape(combined_x)[0]
 
@@ -198,7 +198,7 @@ def create_combined_regression_array(frame,filter):
     combined_y = combined_y.reshape(n_line,1)
     
     for f in freqs[1:] :
-        x_filtered, y_filtered = create_reg_arrays1(f,frame,filter)
+        x_filtered, y_filtered = create_reg_array1(f,frame,filter)
         combined_x = np.append(combined_x, x_filtered.reshape(n_line,1),axis=1)
         combined_y = np.append(combined_y, y_filtered.reshape(n_line,1),axis=1)
 
