@@ -42,9 +42,7 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
     x_data, y_data = create_combined_regression_array (data, filter)
     print("Regression arrays created.") 
     print(f"x_data shape: {x_data.shape}")
-    print(f"y_data shape: {y_data.shape}") 
-
-    
+    print(f"y_data shape: {y_data.shape}")
 
 if __name__ == "__main__":
     

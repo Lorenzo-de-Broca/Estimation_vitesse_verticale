@@ -79,10 +79,10 @@ def create_reg_arrays1(freq, frame, filter):
     """
         
     x_data = np.zeros((87, 500, 500))
-    index_filter = np.nonzero((87, 500, 500))
+    index_filter = np.zeros((87, 500, 500))
     for t in range(87):
         x_data[t,:,:] = (frame[f'aos_{freq}BT'][t+1,:,:]-frame[f'aos_{freq}BT'][t,:,:])/30
-        index_filter = filter[t,:,:]*filter[t+1,:,:]
+        index_filter[t,:,:] = filter[t,:,:]*filter[t+1,:,:]
 
     x_data_filtered = x_data[np.nonzero(index_filter)]
 
@@ -159,7 +159,6 @@ def create_combined_regression_array(frame,filter):
     freqs = ['1830', '1833', '1835', '1837', '183T', '3250', '3253', '3255', '3257', '325T']
     
     combined_x, combined_y = create_reg_arrays1(freqs[0], frame, filter)
-    
     n_line = np.shape(combined_x)[0]
 
     combined_x = combined_x.reshape(n_line,1)
@@ -169,7 +168,7 @@ def create_combined_regression_array(frame,filter):
         x_filtered, y_filtered = create_reg_arrays1(f,frame,filter)
         combined_x = np.append(combined_x, x_filtered.reshape(n_line,1),axis=1)
         combined_y = np.append(combined_y, y_filtered.reshape(n_line,1),axis=1)
-
+    
     return combined_x, combined_y
 
 if __name__ == "__main__":
