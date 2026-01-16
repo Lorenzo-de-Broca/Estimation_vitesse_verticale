@@ -7,7 +7,7 @@ from SRC.extract_data import extract_data, create_reg_array1, create_reg_array2,
 from SRC.filtre_convection import create_convection_filter
 from sklearn.linear_model import LogisticRegression
 
-#%%
+#%% import training, test data and filter
 frame = extract_data()
 filter = create_convection_filter()
 
@@ -61,156 +61,6 @@ DTB_1830_test, DTB_1833_test, DTB_1835_test, DTB_1837_test, DTB_183T_test = DTB_
 DTB_3250_test, DTB_3253_test, DTB_3255_test, DTB_3257_test, DTB_325T_test = DTB_3250_test[indices_test], DTB_3253_test[indices_test], DTB_3255_test[indices_test], DTB_3257_test[indices_test], DTB_325T_test[indices_test]
 W_filtered_1830_test = W_filtered_1830_test[indices_test]
 
-#%% Try tensorflow
-# Make NumPy printouts easier to read.
-np.set_printoptions(precision=3, suppress=True)
-
-import tensorflow as tf
-
-from tensorflow import keras
-from tensorflow.keras import layers
-
-print(tf.__version__)
-
-DTB_1830_normalizer = layers.Normalization(input_shape=[1,], axis=None)
-DTB_1830_normalizer.adapt(DTB_1830)
-
-DTB_1830_model = tf.keras.Sequential([
-    DTB_1830_normalizer,
-    layers.Dense(units=1)
-])
-
-DTB_1830_model.summary()
-
-DTB_1830_model.predict(DTB_1830[:10])
-
-DTB_1830_model.compile(
-    optimizer=tf.optimizers.Adam(learning_rate=0.1),
-    loss='mean_absolute_error')
-
-# time
-history = DTB_1830_model.fit(
-    DTB_1830,
-    W_filtered,
-    epochs=100,
-    # Suppress logging.
-    verbose=0,
-    # Calculate validation results on 20% of the training data.
-    validation_split = 0.60)
-
-hist = pd.DataFrame(history.history)
-hist['epoch'] = history.epoch
-hist.tail()
-
-def plot_loss(history):
-  plt.plot(history.history['loss'], label='loss')
-  plt.plot(history.history['val_loss'], label='val_loss')
-  plt.ylim([0, 10])
-  plt.xlabel('Epoch')
-  plt.ylabel('Error [MPG]')
-  plt.legend()
-  plt.grid(True)
-
-plot_loss(history)
-
-#%% sklearn logistic regression example
-# définition des paramètres
-b = 0
-w = 1
-
-def sigmoid(x1):
-    # z est une fonction linéaire de x1
-    z = w*x1 + b
-    return 1 / (1+np.exp(-z))
-
-# tableau contenant des valeurs de x espacées 
-# régulièrement entre -5 et 5
-plt.figure(figsize=(12,9))
-linx = np.linspace(min(DTB_1830),max(DTB_1830),100)
-plt.plot(DTB_1830, W_filtered,'o')
-plt.plot(linx, sigmoid(linx), color='red')
-plt.xlabel('z')
-plt.ylabel(r'$\sigma(z)$')
-plt.title('Sigmoid function')
-plt.grid()
-plt.show()
-
-
-x = DTB_1830.reshape(-1,1)
-y = W_filtered
-clf = LogisticRegression(solver='lbfgs').fit(x,y)
-
-
-#%% Torch example
-import torch
-import torch.nn.functional as F
-from random import randint, seed
-
-# définition des paramètres
-torch.manual_seed(1337)
-
-# Je crée mon réseau d’un neurone avec une valeur aléatoire
-M = torch.randn((1,1))
-
-# On active le calcul du gradient dans le réseau
-M.requires_grad = True
-
-# On garde une liste de pertes pour plus tard
-losses = list()
-
-# on prend un échantillon
-ix = randint(0, len(DTB_1830)-1)  # Indice de X
-
-x = DTB_1830[ix]
-y = W_filtered[ix]
-print(f"{x=},{y=}")
-
-X = torch.tensor([x]).float()
-y_prevision = M @ X
-print(f"{y_prevision=}")
-
-Y = torch.Tensor([y])
-loss = F.l1_loss(y_prevision, Y)
-print("loss", loss.item())
-
-# backward pass
-M.grad = None
-loss.backward()
-
-for i in range(10000):
-    # on prend un échantillon
-    ix = randint(0, len(DTB_1830)-1)
-
-    x = DTB_1830[ix]
-    y = W_filtered[ix]
-
-    # forward pass
-    y_prevision = M @ torch.tensor([x]).float()
-    loss = F.l1_loss(y_prevision, torch.Tensor([y]))
-
-    # backward pass
-    M.grad = None
-    loss.backward()
-
-    # update
-    lr = 0.01
-    M.data += -lr * M.grad
-
-    # stats
-    losses.append(loss.item())
-
-plt.figure(figsize=(12,9))
-plt.plot(DTB_1830, W_filtered,'o')
-prevision = pd.DataFrame(np.arange(10), columns=["x"])
-m = M.detach()
-prevision["y_prevision"] = prevision["x"].apply(lambda x: (m @ torch.tensor([float(x)]))[0].numpy()) #torch.tensor([4.])
-prevision.plot(y="y_prevision", ax=plt.gca(), x="x")
-
-plt.figure(figsize=(12,9))
-plt.plot(np.linspace(0, len(losses), len(losses)), losses)
-plt.xlabel("Itérations")
-plt.ylabel("Loss")
-plt.title("Evolution de loss au cours des itérations")
 
 #%% tensorflow example
 from tensorflow import keras
@@ -233,13 +83,9 @@ model.compile(loss='mae', optimizer=tf.optimizers.Adam(learning_rate=1e-5))
 # Display the model
 model.summary()
 
-# model.compile(
-#     optimizer=tf.optimizers.Adam(learning_rate=0.1),
-#     loss='mean_absolute_error')
-
 early_stop = EarlyStopping(
     monitor='val_loss',           # Monitor validation loss
-    patience=70,                 # Stop if no improvement for 10 epochs
+    patience=70,                  # Stop if no improvement for 10 epochs
     restore_best_weights=True,    # Restore weights from best epoch
     verbose=1                     # Print when stopping
 )
@@ -249,17 +95,11 @@ history = model.fit(x_data_train, W_filtered_1830_train, epochs=epochs, verbose=
 W_predicted = model.predict(x_data_test)
 W_predicted_train = model.predict(x_data_train)
 
-# W_pred_tot = model.predict(np.array([DTB_1830, DTB_1833, DTB_1835, DTB_1837, DTB_183T, DTB_3250, DTB_3253, DTB_3255, DTB_3257, DTB_325T]).T)
-
 W_pred_tot = model.predict((np.array([DTB_1830[t,:,:].reshape(-1,1), DTB_1833[t,:,:].reshape(-1,1), DTB_1835[t,:,:].reshape(-1,1), DTB_1837[t,:,:].reshape(-1,1), DTB_183T[t,:,:].reshape(-1,1), DTB_3250[t,:,:].reshape(-1,1), DTB_3253[t,:,:].reshape(-1,1), DTB_3255[t,:,:].reshape(-1,1), DTB_3257[t,:,:].reshape(-1,1), DTB_325T[t,:,:].reshape(-1,1)]).T)[0])
-
 w_pred_tot = W_pred_tot.reshape((500,500))
 
 score = model.evaluate(x_data_test, W_filtered_1830_test, verbose=1)
 print('Test loss:', score)
-
-# score = model.evaluate(W_pred_tot, W_filtered_1830, verbose=1)
-# print('Test loss:', score)
 
 plt.figure(figsize=(12,9))
 plt.plot(x_data_test[:, 2], W_filtered_1830_test,'o', label='True')
@@ -325,7 +165,7 @@ cbar = figure.colorbar(im1, ax=ax.ravel().tolist(), shrink=0.6)
 cbar.set_label('W_at_BT (mm/hr)')
 plt.show()
 
-# %%
+# %% figure difference W_at_BT - W_predicted
 filter = create_convection_filter()
 
 plt.figure(figsize=(12,9))
