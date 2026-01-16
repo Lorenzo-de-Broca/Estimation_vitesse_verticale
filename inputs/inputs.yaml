@@ -1,0 +1,4 @@
+training_ratio : 0.6
+
+compute_PCA : True
+PCA_components : 1

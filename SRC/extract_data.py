@@ -12,7 +12,11 @@ import netCDF4 as nc
 import yaml
 from pathlib import Path
 import numpy as np
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
+
+default_train = np.ones((500, 500))
 
 def extract_data():
     """
@@ -123,7 +127,7 @@ def create_train_test_matrix(train_ratio=0.6):
 
     return train_matrix, test_matrix
 
-def create_reg_array2(freq, frame, filter, train_matrix):
+def create_reg_array2(freq, frame, filter, train_matrix=default_train):
     """
     Create arrays of Delta_TB filtered by convection filter and training
 
@@ -154,7 +158,7 @@ def create_reg_array2(freq, frame, filter, train_matrix):
 
     return x_data_filtered, y_data_filtered
 
-def create_reg_array3(freq, frame, filter, train_matrix):
+def create_reg_array3(freq, frame, filter, train_matrix = default_train):
     """
     Create arrays of raw TB filtered by convection filter and training
 
@@ -174,23 +178,23 @@ def create_reg_array3(freq, frame, filter, train_matrix):
         
     index_filter = np.zeros((88, 500, 500))
     for t in range(88):
-        index_filter[t,:,:] = filter[t,:,:]*filter[t+1,:,:]*train_matrix
+        index_filter[t,:,:] = filter[t,:,:]*train_matrix
 
     x_data_filtered = frame[f'aos_{freq}BT'][np.nonzero(index_filter)]
 
-    y_data = frame['W_at_BT'][:87,:,:]
+    y_data = frame['W_at_BT'][:88,:,:]
     y_data_filtered = y_data[np.nonzero(index_filter)]
 
     return x_data_filtered, y_data_filtered
 
-def create_combined_regression_array(frame,filter):
+def create_combined_regression_array_deltat(frame,filter,train_matrix = default_train):
     """
     This function create a matrix containing filtered datas of all differents experimental measurement in order to compute PCA or covariance for instance
 
     """
     freqs = ['1830', '1833', '1835', '1837', '183T', '3250', '3253', '3255', '3257', '325T']
     
-    combined_x, combined_y = create_reg_array1(freqs[0], frame, filter)
+    combined_x, combined_y = create_reg_array2(freqs[0], frame, filter, train_matrix)
     
     n_line = np.shape(combined_x)[0]
 
@@ -198,11 +202,54 @@ def create_combined_regression_array(frame,filter):
     combined_y = combined_y.reshape(n_line,1)
     
     for f in freqs[1:] :
-        x_filtered, y_filtered = create_reg_array1(f,frame,filter)
+        x_filtered, y_filtered = create_reg_array2(f, frame, filter, train_matrix)
         combined_x = np.append(combined_x, x_filtered.reshape(n_line,1),axis=1)
-        combined_y = np.append(combined_y, y_filtered.reshape(n_line,1),axis=1)
     
     return combined_x, combined_y
+
+def create_combined_regression_array(frame,filter,train_matrix):
+    """
+    This function create a matrix containing filtered datas of all differents experimental measurement in order to compute PCA or covariance for instance
+
+    """
+    freqs = ['1830', '1833', '1835', '1837', '183T', '3250', '3253', '3255', '3257', '325T']
+  
+    combined_x, combined_y = create_reg_array3(freqs[0], frame, filter, train_matrix)
+    
+    n_line = np.shape(combined_x)[0]
+
+    combined_x = combined_x.reshape(n_line,1)
+    combined_y = combined_y.reshape(n_line,1)
+    
+    for f in freqs[1:] :
+        x_filtered, y_filtered = create_reg_array3(f, frame, filter, train_matrix)
+        combined_x = np.append(combined_x, x_filtered.reshape(n_line,1),axis=1)
+    
+    return combined_x, combined_y
+
+    
+def create_PCA (combined_x, combined_y, pca_components):
+    """
+    This function compute PCA on combined regression array
+
+    """
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(combined_x)  # X = ton tableau de mesures
+
+    pca = PCA(n_components=pca_components)  # conserve 95% de l'information
+    X_pca = pca.fit_transform(X_scaled)
+    
+    print(pca.explained_variance_ratio_)
+    print("Variance cumulée :", np.cumsum(pca.explained_variance_ratio_))
+    print("Composantes principales :", pca.components_)
+    print("Nombre de composantes principales conservées :", pca.n_components_)
+
+    print("Shape of X_pca:", X_pca.shape)
+    print("PCA computed.")
+    
+    return X_pca
+
+
 
 if __name__ == "__main__":
     frame = extract_data()
