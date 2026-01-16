@@ -1,5 +1,7 @@
 # File
 inputs/paths.yaml
+figures/*.pdf
+figures/*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -174,7 +174,7 @@ def create_reg_array3(freq, frame, filter, train_matrix):
         
     index_filter = np.zeros((88, 500, 500))
     for t in range(88):
-        index_filter[t,:,:] = filter[t,:,:]*filter[t+1,:,:]*train_matrix
+        index_filter[t,:,:] = filter[t,:,:]*train_matrix
 
     x_data_filtered = frame[f'aos_{freq}BT'][np.nonzero(index_filter)]
 
