@@ -4,7 +4,7 @@ import numpy as np
 import os
 import sys 
 
-alpha = 0.01
+alpha = 0.1
 
 def plot_filter (x_data, filter, train_matrix) :
     t=0
@@ -23,7 +23,7 @@ def plot_filter (x_data, filter, train_matrix) :
 
 
 
-def plot_test_model (y_data,y_pred,pca_components) :
+def plot_test_model (y_data,y_pred,title) :
     """Plot the true vs predicted values for the regression model
     Args:
         y_data (np.array): 1D array (n_samples,) of true output data
@@ -37,24 +37,25 @@ def plot_test_model (y_data,y_pred,pca_components) :
     plt.plot([y_data.min(), y_data.max()], [y_data.min(), y_data.max()], 'k--')
     plt.xlabel("Vitesse verticale vraie [m/s]")
     plt.ylabel("Vitesse verticale prédite [m/s]")
-    plt.title(f"Régression multinéaire (PCA - {int(pca_components)}) - Entraînement")
+    plt.title(f"Régression multinéaire (with {title}) - Entraînement")
 
-    plt.savefig(f'figures/Data_Vs_Prediction_PCA_components_{int(pca_components)}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'figures/Data_Vs_Prediction_{title}.png', dpi=300, bbox_inches='tight')
 
     #plt.show()
     plt.close()
 
-def plot_residuals (y_pred, residuals, pca_components) :
+def plot_residuals (y_pred, residuals, title) :
     """Plot the residuals of the regression model
     Args:
         residuals (np.array): 1D array (n_samples,) of residuals
     """
+    print("hello")
     plt.figure()
     plt.hist(residuals, bins=1000, alpha=0.5)
     plt.xlabel("Résidus [m/s]")
     plt.ylabel("Fréquence")
-    plt.title(f"Histogramme des résidus (PCA - {int(pca_components)})")
-    plt.savefig(f'figures/Residual_histograms_PCA_components_{int(pca_components)}.png', dpi=300, bbox_inches='tight')
+    plt.title(f"Histogramme des résidus (with {title})")
+    plt.savefig(f'figures/Residual_histograms_{title}.png', dpi=300, bbox_inches='tight')
 
     #plt.show()
     plt.close()
@@ -66,8 +67,8 @@ def plot_residuals (y_pred, residuals, pca_components) :
     plt.axhline(0, color='k', linestyle='--')
     plt.xlabel("Valeur prédite [m/s]")
     plt.ylabel("Résidu [m/s]")
-    plt.title(f"Analyse des résidus (PCA - {int(pca_components)})")
-    plt.savefig(f'figures/Residual_analysis_PCA_components_{int(pca_components)}.png', dpi=300, bbox_inches='tight')
+    plt.title(f"Analyse des résidus (with {title})")
+    plt.savefig(f'figures/Residual_analysis_{title}.png', dpi=300, bbox_inches='tight')
 
     #plt.show()
     plt.close()
@@ -114,7 +115,7 @@ def plot_real_velocity_map (y_data, filter):
     plt.savefig(f'figures/Measured_velocity_at_t_{t}.png', dpi=300, bbox_inches='tight')
     plt.show()
 
-def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, t=0):
+def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, title, t=0):
     """Plot measured and predicted velocity maps side by side with a shared colorbar
     
     Args:
@@ -146,7 +147,7 @@ def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, t=0):
     # Right plot: Predicted velocity
     im2 = axes[1].imshow(y_data_pred[t, :, :], origin='lower', cmap='viridis', norm=norm1)
     axes[1].imshow(filter[t, :, :], origin='lower', cmap=cmapw, norm=norm_mask)
-    axes[1].set_title(f'Predicted velocity at t={t}', fontsize=12)
+    axes[1].set_title(f'Predicted velocity at (with {title}) t={t}', fontsize=12)
     axes[1].set_xlabel('X')
     axes[1].set_ylabel('Y')
     
@@ -155,5 +156,5 @@ def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, t=0):
     cbar.set_label('Vertical velocity [m/s]', fontsize=11)
     
     #plt.tight_layout()
-    plt.savefig(f'figures/Velocity_comparison_at_t_{t}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'figures/Velocity_comparison_at_t_{t}_{title}.png', dpi=300, bbox_inches='tight')
     plt.show()

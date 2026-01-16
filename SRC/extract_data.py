@@ -187,7 +187,7 @@ def create_reg_array3(freq, frame, filter, train_matrix = default_train):
 
     return x_data_filtered, y_data_filtered
 
-def create_combined_regression_array_deltat(frame,filter,train_matrix = default_train):
+def create_combined_regression_array_delta_t(frame,filter,train_matrix = default_train):
     """
     This function create a matrix containing filtered datas of all differents experimental measurement in order to compute PCA or covariance for instance
 
