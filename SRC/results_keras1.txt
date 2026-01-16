@@ -1,0 +1,31 @@
+###################
+model = keras.Sequential()
+model.add(keras.layers.Dense(units = 200, activation = 'relu', input_shape=x_data_train.shape[1:]))
+model.add(keras.layers.Dense(units = 200, activation = 'relu'))
+model.add(keras.layers.Dense(units = 200, activation = 'relu'))
+model.add(keras.layers.Dense(units = 200, activation = 'relu'))
+model.add(keras.layers.Dense(units = 1, activation = 'linear'))
+model.compile(loss='mse', optimizer="adam")
+
+early_stop = EarlyStopping(
+    monitor='val_loss',           # Monitor validation loss
+    patience= ## ,                  # Stop if no improvement for 10 epochs
+    restore_best_weights=True,    # Restore weights from best epoch
+    verbose=1                     # Print when stopping
+)
+###################
+
+patience 10: best epoch=21
+score = 0.04956
+
+patience 100: best epoch=68
+score = 0.04948
+
+patience 100: best epoch=2
+score = 0.04961
+
+patience 100: best epoch=35
+score = 0.05001
+
+
+
