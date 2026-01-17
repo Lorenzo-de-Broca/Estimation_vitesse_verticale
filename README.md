@@ -1,6 +1,6 @@
 # Estimation de la Vitesse Verticale de l'Air
 
-## í³‹ Description du Projet
+## ï¿½ï¿½ï¿½ Description du Projet
 
 Ce projet vise Ã  **estimer la vitesse verticale de l'air** en utilisant des donnÃ©es satellites de **tempÃ©ratures de brillance** (brightness temperature). L'approche combine des techniques de rÃ©gression machine learning pour Ã©tablir une relation entre les variations spatiales et temporelles des tempÃ©ratures de brillance et la vitesse verticale mesurÃ©e.
 
@@ -13,7 +13,7 @@ Ce projet vise Ã  **estimer la vitesse verticale de l'air** en utilisant des don
 
 ---
 
-## íº€ Guide d'Installation et d'Utilisation
+## ï¿½ï¿½ï¿½ Guide d'Installation et d'Utilisation
 
 ### PrÃ©requis - Installation des Librairies
 
@@ -107,7 +107,7 @@ data_file: "/chemin/complet/vers/MesoNH-ice3_CADDIWAF7_1km_projectHB.nc"
 
 ---
 
-## í³ Structure du Code
+## ï¿½ï¿½ï¿½ Structure du Code
 
 ```
 Estimation_vitesse_verticale/
@@ -133,9 +133,9 @@ Estimation_vitesse_verticale/
 
 ---
 
-## í³š DÃ©tail des Modules
+## ï¿½ï¿½ï¿½ DÃ©tail des Modules
 
-### í´µ `main.py`
+### ï¿½ï¿½ï¿½ `main.py`
 **RÃ´le** : Orchestrateur principal du pipeline d'analyse
 
 **Fonctions principales** :
@@ -156,7 +156,7 @@ Chargement config â†’ Extraction donnÃ©es â†’ Filtrage convection
 
 ---
 
-### í´µ `SRC/extract_data.py`
+### ï¿½ï¿½ï¿½ `SRC/extract_data.py`
 **RÃ´le** : Extraction et prÃ©traitement des donnÃ©es
 
 **Fonctions principales** :
@@ -177,7 +177,7 @@ Chargement config â†’ Extraction donnÃ©es â†’ Filtrage convection
 
 ---
 
-### í´µ `SRC/filtre_convection.py`
+### ï¿½ï¿½ï¿½ `SRC/filtre_convection.py`
 **RÃ´le** : CrÃ©er un filtre pour identifier et exclure les zones de convection
 
 **Fonctions principales** :
@@ -195,7 +195,7 @@ Sinon â†’ pas de convection â†’ masque Ã  1
 
 ---
 
-### í´µ `SRC/regression.py`
+### ï¿½ï¿½ï¿½ `SRC/regression.py`
 **RÃ´le** : ImplÃ©mentation des modÃ¨les de rÃ©gression
 
 **Fonctions principales** :
@@ -213,7 +213,7 @@ Sinon â†’ pas de convection â†’ masque Ã  1
 
 ---
 
-### í´µ `SRC/plots.py`
+### ï¿½ï¿½ï¿½ `SRC/plots.py`
 **RÃ´le** : Toutes les visualisations et graphiques
 
 **Fonctions principales** :
@@ -234,7 +234,7 @@ Sinon â†’ pas de convection â†’ masque Ã  1
 
 ---
 
-### í´µ `SRC/utils.py`
+### ï¿½ï¿½ï¿½ `SRC/utils.py`
 **RÃ´le** : Fonctions utilitaires rÃ©utilisables
 
 **Fonctions principales** :
@@ -249,7 +249,7 @@ Sinon â†’ pas de convection â†’ masque Ã  1
 
 ---
 
-### í´µ `SRC/try_tensorflow.py`
+### ï¿½ï¿½ï¿½ `SRC/try_tensorflow.py`
 **RÃ´le** : ImplÃ©mentation exploratoire avec rÃ©seaux de neurones
 
 **Points clÃ©s** :
@@ -267,7 +267,7 @@ Dense(200, ReLU) â†’ Dense(200, ReLU) â†’ Dense(200, ReLU)
 
 ---
 
-### í´µ `SRC/sandbox.py`
+### ï¿½ï¿½ï¿½ `SRC/sandbox.py`
 **RÃ´le** : Code exploratoire et tests ad-hoc
 
 **Contenu** : 
@@ -280,7 +280,7 @@ Dense(200, ReLU) â†’ Dense(200, ReLU) â†’ Dense(200, ReLU)
 
 ---
 
-## í³Š Flux de DonnÃ©es Typique
+## ï¿½ï¿½ï¿½ Flux de DonnÃ©es Typique
 
 ```
 netCDF File
@@ -306,7 +306,7 @@ plot_*() â†’ PNG files in figures/
 
 ---
 
-## í¾¯ Cas d'Usage Courants
+## ï¿½ï¿½ï¿½ Cas d'Usage Courants
 
 ### 1ï¸âƒ£ RÃ©gression LinÃ©aire Simple
 ```bash
@@ -339,7 +339,7 @@ python SRC/try_tensorflow.py
 
 ---
 
-## í³ˆ InterprÃ©tation des RÃ©sultats
+## ï¿½ï¿½ï¿½ InterprÃ©tation des RÃ©sultats
 
 Les figures gÃ©nÃ©rÃ©es dans `figures/` incluent :
 
@@ -362,7 +362,7 @@ Les figures gÃ©nÃ©rÃ©es dans `figures/` incluent :
 
 ---
 
-## í´ DÃ©pannage
+## ï¿½ï¿½ï¿½ DÃ©pannage
 
 | ProblÃ¨me | Solution |
 |----------|----------|
@@ -373,7 +373,7 @@ Les figures gÃ©nÃ©rÃ©es dans `figures/` incluent :
 
 ---
 
-## í³ RÃ©fÃ©rences Techniques
+## ï¿½ï¿½ï¿½ RÃ©fÃ©rences Techniques
 
 ### Canaux de FrÃ©quence Disponibles
 - `aos_1830BT`, `aos_1833BT`, `aos_1835BT`, `aos_1837BT`, `aos_183TBT`
@@ -386,6 +386,6 @@ Les figures gÃ©nÃ©rÃ©es dans `figures/` incluent :
 
 ---
 
-**Auteur** : Titouan Renaud  
+**Auteur** : Titouan Renaud, Lorenzo de Broca et Louis Capelle 
 **DerniÃ¨re mise Ã  jour** : 2026  
 **Classe** : M2 ECLAT - MÃ©thodes Statistiques de Climat
