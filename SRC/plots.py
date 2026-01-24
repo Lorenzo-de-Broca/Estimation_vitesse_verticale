@@ -42,13 +42,14 @@ def plot_filter (x_data, filter, train_matrix, t=0) :
 
 
 
-def plot_test_model (y_data,y_pred,title,R2,rmse,data_set='train') :
+def plot_test_model (y_data,y_pred,title,R2,rmse,data_set='train',output_dir='figures') :
     """Plot the true vs predicted values for the regression model
     Args:
         y_data (np.array): 1D array (n_samples,) of true output data
         y_pred (np.array): 1D array (n_samples,) of predicted output data
+        output_dir (str): Directory to save the figure
     """
-    
+    print(output_dir)
     plt.figure()
     n = 100  # garder 1 point sur 100
     indices = np.arange(len(y_data))[::n]
@@ -59,25 +60,26 @@ def plot_test_model (y_data,y_pred,title,R2,rmse,data_set='train') :
     plt.plot([0, 0], [y_min, y_max], 'r--')
     plt.xlabel("Vitesse verticale vraie [m/s]")
     plt.ylabel("Vitesse verticale prédite [m/s]")
-    plt.title(f"Régression multinéaire - {title} on {data_set} set")
+    plt.title(f"Predictions VS Data - {title} on {data_set} set")
     plt.legend()
-    
-    plt.savefig(f'figures/Data_Vs_Prediction_{title}_{data_set}.png', dpi=300, bbox_inches='tight')
+    filepath = f'{output_dir}/Data_Vs_Prediction_{data_set}.png'
+    plt.savefig(filepath, dpi=300, bbox_inches='tight')
     #plt.show()
     plt.close()
 
 
-def plot_residuals (y_pred, residuals, title, data_set='train') :
+def plot_residuals (y_pred, residuals, title, data_set='train', output_dir='figures') :
     """Plot the residuals of the regression model
     Args:
         residuals (np.array): 1D array (n_samples,) of residuals
+        output_dir (str): Directory to save the figures
     """
     plt.figure()
     plt.hist(residuals, bins=1000, alpha=0.5)
     plt.xlabel("Résidus [m/s]")
     plt.ylabel("Fréquence")
     plt.title(f"Histogramme des résidus - {title} on {data_set} set")
-    plt.savefig(f'figures/Residual_histograms_{title}_{data_set}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, f'Residual_histograms_{data_set}.png'), dpi=300, bbox_inches='tight')
 
     #plt.show()
     plt.close()
@@ -90,13 +92,14 @@ def plot_residuals (y_pred, residuals, title, data_set='train') :
     plt.xlabel("Valeur prédite [m/s]")
     plt.ylabel("Résidu [m/s]")
     plt.title(f"Analyse des résidus - {title} on {data_set} set")
-    plt.savefig(f'figures/Residual_analysis_{title}_{data_set}.png', dpi=300, bbox_inches='tight')
+    filepath = f'{output_dir}/Residual_analysis_{data_set}.png'
+    plt.savefig(filepath, dpi=300, bbox_inches='tight')
 
     #plt.show()
     plt.close()
     
     
-def plot_reconstructed_velocity_map (x_data, model, filter):
+def plot_reconstructed_velocity_map (x_data, model, filter, output_dir='figures'):
     """Plot the reconstructed map of vertical velocity
     """
     t=0
@@ -116,12 +119,13 @@ def plot_reconstructed_velocity_map (x_data, model, filter):
     plt.colorbar()
     plt.imshow(filter[t,:,:], origin='lower', cmap=cmapw, norm=norm)
     plt.title(f'Predicted velocity at t={t}')
-    plt.savefig(f'figures/Predicted_velocity_at_t_{t}.png', dpi=300, bbox_inches='tight')
-    
+    filepath = f'{output_dir}/Predicted_velocity_at_t_{t}.png'
+    plt.savefig(filepath, dpi=300, bbox_inches='tight')
+
     #plt.show()
     plt.close()
     
-def plot_real_velocity_map (y_data, filter):
+def plot_real_velocity_map (y_data, filter, output_dir='figures'):
     """Plot the reconstructed map of vertical velocity
     """
     t=0
@@ -137,12 +141,13 @@ def plot_real_velocity_map (y_data, filter):
     plt.colorbar()
     plt.imshow(filter[t,:,:], origin='lower', cmap=cmapw, norm=norm)
     plt.title(f'Measured velocity at t={t}')
-    plt.savefig(f'figures/Measured_velocity_at_t_{t}.png', dpi=300, bbox_inches='tight')
+    filepath = f'{output_dir}/Measured_velocity_at_t_{t}.png'
+    plt.savefig(filepath, dpi=300, bbox_inches='tight')
     
     #plt.show()
     plt.close()
 
-def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, title, t=0):
+def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, title, t=0, output_dir='figures'):
     """Plot measured and predicted velocity maps side by side with a shared colorbar
     
     Args:
@@ -151,6 +156,7 @@ def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, title, t=0):
         model: Trained regression model
         filter (np.array): 3D array of filter mask
         t (int): Time index to plot (default: 0)
+        output_dir (str): Directory to save the figure
     """
     cmapb, cmapw, norm, norm_plot, norm_pos, norm_strict_pos, cmapb_pos = create_c_maps()
     
@@ -179,13 +185,13 @@ def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, title, t=0):
 
     plt.suptitle(f'Velocity compararison - {title}', fontsize=14)
     #plt.tight_layout(rect=[0, 0, 1, 0.96])
-    
-    plt.savefig(f'figures/Velocity_comparison_at_t_{t}_{title}.png', dpi=300, bbox_inches='tight')
-    
+    filepath = f'{output_dir}/Velocity_comparison_at_t_{t}.png'
+    plt.savefig(filepath, dpi=300, bbox_inches='tight')
+
     #plt.show()
     plt.close()
 
-def plot_difference_velocity_map(w_data, w_pred_tot, filter, title, t=0):
+def plot_difference_velocity_map(w_data, w_pred_tot, filter, title, t=0, output_dir='figures'):
     
     cmapb, cmapw, norm, norm_plot, norm_pos, norm_strict_pos, cmapb_pos = create_c_maps()
 
@@ -208,7 +214,7 @@ def plot_difference_velocity_map(w_data, w_pred_tot, filter, title, t=0):
     axes[0].imshow(w_data[t,:,:], origin='lower', cmap='Spectral', norm=norm_plot, alpha=0.6)
     axes[0].imshow(product, origin='lower', cmap=cmapb_pos, norm=norm_pos)
     axes[0].imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapw, norm=norm)
-    axes[0].set_title(f'Product < 1e-2 at t={t} (ratio={ratio_negative*100:.2f}%)', fontsize=12)
+    axes[0].set_title(f'Product < {eps:.1e} at t={t} (ratio={ratio_negative*100:.2f}%)', fontsize=12)
     axes[0].set_xlabel('X')
     axes[0].set_ylabel('Y')
     
@@ -226,9 +232,10 @@ def plot_difference_velocity_map(w_data, w_pred_tot, filter, title, t=0):
 
     plt.suptitle(f'Difference velocity - {title}', fontsize=14)
     #plt.subplots_adjust(left=0.07, right=0.9, top=0.8, bottom=0.1, wspace=0.3)
-    plt.savefig(f'figures/Difference_velocity_map_t_{t}_{title}.png', dpi=300, bbox_inches='tight')
+    filepath = f'{output_dir}/Difference_velocity_map_t_{t}.png'
+    plt.savefig(filepath, dpi=300, bbox_inches='tight')
     
-    #plt.show()
+    plt.show()
     plt.close()
     
     

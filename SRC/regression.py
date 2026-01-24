@@ -26,7 +26,7 @@ def multi_lin_reg (x_data,y_data):
 
     return model
 
-def test_model(model, X_test, y_test):
+def test_model(model, X_test, y_test, model_name="Linear Regression"):
     """Tests the linear regression model on test data and computes the mean squared error
 
     Args:
@@ -42,12 +42,13 @@ def test_model(model, X_test, y_test):
     print("y_pred shape", y_pred.shape)
     
     # Flatten y_test to 1D if it's 2D to avoid broadcasting issues
-    y_test_flat = y_test.ravel()
+    if model_name == "Random Forest":
+        y_test = y_test.ravel()
 
-    rmse = np.sqrt(mean_squared_error(y_test_flat, y_pred))
-    residuals = y_test_flat - y_pred
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    residuals = y_test - y_pred
 
-    r2 = model.score(X_test, y_test_flat)
+    r2 = model.score(X_test, y_test)
 
     return y_pred, rmse, residuals, r2
 

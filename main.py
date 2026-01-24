@@ -22,7 +22,7 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
     """
     La fonction principale qui excécute la régression linéaire pour estimer la vitesse verticale
     """
-
+    
     # Lecture des paramètres depuis le fichier YAML
     print(f"Loading input configuration from file : {input_file}")
     config = load_input(input_file)
@@ -41,11 +41,17 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
     
     if compute_random_forest :
         title = f"Random_Forest ({n_trees} trees) ({training_ratio*100} % train)"
+        output_dir = f"figures/Random_Forest_{n_trees}_trees_{training_ratio*100}_percent_train"
         compute_PCA = False
+        model_name = "Random Forest"
     elif compute_delta_T :
-        title = f"Delta T ({training_ratio*100} % train)"
+        title = f"Delta_T ({training_ratio*100} % train)"
+        output_dir = f"figures/Delta_T_{training_ratio*100}_percent_train"
+        model_name = "Multiple Linear Regression"
     else :
-        title = f"Absolute T ({training_ratio*100} % train)"
+        title = f"Absolute_T ({training_ratio*100} % train)"
+        output_dir = f"figures/Absolute_T_{training_ratio*100}_percent_train"
+        model_name = "Multiple Linear Regression"
     
     if compute_PCA :
         pca_components = config["PCA_components"]
@@ -56,6 +62,7 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
     
     if compute_PCA :
         title += f"_PCA_{pca_components}"
+        output_dir += f"_PCA_{pca_components}"
     
     print(f"Training ratio set to : {training_ratio}")
     
@@ -113,21 +120,21 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
     print("y_train shape for testing:", y_train.shape)
     
     if compute_random_forest :
-        y_train_pred, rmse_train, residuals_train, r2_train = test_model (model, x_train, y_train)
-        y_test_pred, rmse_test, residuals_test, r2_test = test_model (model, x_test, y_test)
-        y_all_data_pred, rmse_all, residuals_all, r2_all = test_model (model, x_data, y_data)
+        y_train_pred, rmse_train, residuals_train, r2_train = test_model (model, x_train, y_train, model_name=model_name)
+        y_test_pred, rmse_test, residuals_test, r2_test = test_model (model, x_test, y_test, model_name=model_name)
+        y_all_data_pred, rmse_all, residuals_all, r2_all = test_model (model, x_data, y_data, model_name=model_name)
 
     else :
         if compute_PCA :
-            y_train_pred, rmse_train, residuals_train, r2_train = test_model (model, X_pca, y_train)
-            y_test_pred, rmse_test, residuals_test, r2_test = test_model (model, X_test_pca, y_test)
-            y_all_data_pred, rmse_all, residuals_all, r2_all = test_model (model, X_all_data_pca, y_data)
-        
+            y_train_pred, rmse_train, residuals_train, r2_train = test_model (model, X_pca, y_train, model_name=model_name)
+            y_test_pred, rmse_test, residuals_test, r2_test = test_model (model, X_test_pca, y_test, model_name=model_name)
+            y_all_data_pred, rmse_all, residuals_all, r2_all = test_model (model, X_all_data_pca, y_data, model_name=model_name)
+
         else :
-            y_train_pred, rmse_train, residuals_train, r2_train = test_model (model, x_train, y_train)
-            y_test_pred, rmse_test, residuals_test, r2_test = test_model (model, x_test, y_test)
-            y_all_data_pred, rmse_all, residuals_all, r2_all = test_model (model, x_data, y_data)
-    
+            y_train_pred, rmse_train, residuals_train, r2_train = test_model (model, x_train, y_train, model_name=model_name)
+            y_test_pred, rmse_test, residuals_test, r2_test = test_model (model, x_test, y_test, model_name=model_name)
+            y_all_data_pred, rmse_all, residuals_all, r2_all = test_model (model, x_data, y_data, model_name=model_name)
+
     print("Model tested successfully.")
     print(f"RMSE on training set: {rmse_train}")
     print(f"R² on training set: {r2_train}")
@@ -140,20 +147,25 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
 
     print("Plotting results ...")
     
-    plot_test_model (y_train, y_train_pred, title, R2=r2_train, rmse=rmse_train, data_set='train')
-    plot_test_model (y_test, y_test_pred, title, R2=r2_test, rmse=rmse_test, data_set='test')
+    # Créer le dossier pour les résultats avec chemin absolu
+    
+    print(f"Creating output directory at: {output_dir}")
+    os.makedirs(output_dir, exist_ok=True)
+    
+    plot_test_model (y_train, y_train_pred, title, R2=r2_train, rmse=rmse_train, data_set='train', output_dir=output_dir)
+    plot_test_model (y_test, y_test_pred, title, R2=r2_test, rmse=rmse_test, data_set='test', output_dir=output_dir)
     print("comparisons plotted")
     
-    plot_residuals (y_train_pred, residuals_train, title, data_set='train')
-    plot_residuals (y_test_pred, residuals_test, title, data_set='test')
+    plot_residuals (y_train_pred, residuals_train, title, data_set='train', output_dir=output_dir)
+    plot_residuals (y_test_pred, residuals_test, title, data_set='test', output_dir=output_dir)
     print("residuals plotted")
 
     if compute_delta_T :
-        plot_velocity_comparison(x_data, y_data.reshape(87,500,500), y_all_data_pred.reshape(87,500,500), filter, title=title, t=0)
-        plot_difference_velocity_map(y_data.reshape(87,500,500), y_all_data_pred, filter, title)
+        plot_velocity_comparison(x_data, y_data.reshape(87,500,500), y_all_data_pred.reshape(87,500,500), filter, title=title, t=0, output_dir=output_dir)
+        plot_difference_velocity_map(y_data.reshape(87,500,500), y_all_data_pred.reshape(87,500,500), filter, title, output_dir=output_dir)
     else :
-        plot_velocity_comparison(x_data, y_data.reshape(88,500,500), y_all_data_pred.reshape(88,500,500), filter, title=title, t=0)
-        plot_difference_velocity_map(y_data.reshape(88,500,500), y_all_data_pred.reshape(88,500,500), filter, title)
+        plot_velocity_comparison(x_data, y_data.reshape(88,500,500), y_all_data_pred.reshape(88,500,500), filter, title=title, t=0, output_dir=output_dir)
+        plot_difference_velocity_map(y_data.reshape(88,500,500), y_all_data_pred.reshape(88,500,500), filter, title, output_dir=output_dir)
     
 
 if __name__ == "__main__":
