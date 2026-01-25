@@ -249,7 +249,65 @@ def create_PCA (combined_x, combined_y, pca_components):
     
     return X_pca
 
+def create_data_neuronal(frame, filter, train_ratio, pop_size):
+    """
+    creatin training an testong data for neuronal network
+    """
+    train_mat, test_mat = create_train_test_matrix(train_ratio=train_ratio)
 
+    DTB_1830_train, W_filtered_1830_train = create_reg_array2('1830', frame, filter, train_mat)
+    DTB_1833_train, W_filtered_1833_train = create_reg_array2('1833', frame, filter, train_mat)
+    DTB_1835_train, W_filtered_1835_train = create_reg_array2('1835', frame, filter, train_mat)
+    DTB_1837_train, W_filtered_1837_train = create_reg_array2('1837', frame, filter, train_mat)
+    DTB_183T_train, W_filtered_183T_train = create_reg_array2('183T', frame, filter, train_mat)
+    DTB_3250_train, W_filtered_3250_train = create_reg_array2('3250', frame, filter, train_mat)
+    DTB_3253_train, W_filtered_3253_train = create_reg_array2('3253', frame, filter, train_mat)
+    DTB_3255_train, W_filtered_3255_train = create_reg_array2('3255', frame, filter, train_mat)
+    DTB_3257_train, W_filtered_3257_train = create_reg_array2('3257', frame, filter, train_mat)
+    DTB_325T_train, W_filtered_325T_train = create_reg_array2('325T', frame, filter, train_mat)
+
+    DTB_1830_test, W_filtered_1830_test = create_reg_array2('1830', frame, filter, test_mat)
+    DTB_1833_test, W_filtered_1833_test = create_reg_array2('1833', frame, filter, test_mat)
+    DTB_1835_test, W_filtered_1835_test = create_reg_array2('1835', frame, filter, test_mat)
+    DTB_1837_test, W_filtered_1837_test = create_reg_array2('1837', frame, filter, test_mat)
+    DTB_183T_test, W_filtered_183T_test = create_reg_array2('183T', frame, filter, test_mat)
+    DTB_3250_test, W_filtered_3250_test = create_reg_array2('3250', frame, filter, test_mat)
+    DTB_3253_test, W_filtered_3253_test = create_reg_array2('3253', frame, filter, test_mat)
+    DTB_3255_test, W_filtered_3255_test = create_reg_array2('3255', frame, filter, test_mat)
+    DTB_3257_test, W_filtered_3257_test = create_reg_array2('3257', frame, filter, test_mat)
+    DTB_325T_test, W_filtered_325T_test = create_reg_array2('325T', frame, filter, test_mat)
+
+    DTB_1830 = np.array([(frame['aos_1830BT'][t+1,:,:]-frame['aos_1830BT'][t,:,:])/30 for t in range(87)])
+    DTB_1833 = np.array([(frame['aos_1833BT'][t+1,:,:]-frame['aos_1833BT'][t,:,:])/30 for t in range(87)])
+    DTB_1835 = np.array([(frame['aos_1835BT'][t+1,:,:]-frame['aos_1835BT'][t,:,:])/30 for t in range(87)])
+    DTB_1837 = np.array([(frame['aos_1837BT'][t+1,:,:]-frame['aos_1837BT'][t,:,:])/30 for t in range(87)])
+    DTB_183T = np.array([(frame['aos_183TBT'][t+1,:,:]-frame['aos_183TBT'][t,:,:])/30 for t in range(87)])
+    DTB_3250 = np.array([(frame['aos_3250BT'][t+1,:,:]-frame['aos_3250BT'][t,:,:])/30 for t in range(87)])
+    DTB_3253 = np.array([(frame['aos_3253BT'][t+1,:,:]-frame['aos_3253BT'][t,:,:])/30 for t in range(87)])
+    DTB_3255 = np.array([(frame['aos_3255BT'][t+1,:,:]-frame['aos_3255BT'][t,:,:])/30 for t in range(87)])
+    DTB_3257 = np.array([(frame['aos_3257BT'][t+1,:,:]-frame['aos_3257BT'][t,:,:])/30 for t in range(87)])
+    DTB_325T = np.array([(frame['aos_325TBT'][t+1,:,:]-frame['aos_325TBT'][t,:,:])/30 for t in range(87)])
+
+    np.random.seed(42)
+    size = pop_size
+    indices_train = np.random.choice(len(DTB_1830_train), size=size, replace=False)
+    DTB_1830_train, DTB_1833_train, DTB_1835_train, DTB_1837_train, DTB_183T_train = DTB_1830_train[indices_train], DTB_1833_train[indices_train], DTB_1835_train[indices_train], DTB_1837_train[indices_train], DTB_183T_train[indices_train]
+    DTB_3250_train, DTB_3253_train, DTB_3255_train, DTB_3257_train, DTB_325T_train = DTB_3250_train[indices_train], DTB_3253_train[indices_train], DTB_3255_train[indices_train], DTB_3257_train[indices_train], DTB_325T_train[indices_train]
+    W_filtered_train = W_filtered_1830_train[indices_train]
+
+    indices_test = np.random.choice(len(DTB_1830_test), size=int((1-train_ratio)/train_ratio*size), replace=False)
+    DTB_1830_test, DTB_1833_test, DTB_1835_test, DTB_1837_test, DTB_183T_test = DTB_1830_test[indices_test], DTB_1833_test[indices_test], DTB_1835_test[indices_test], DTB_1837_test[indices_test], DTB_183T_test[indices_test]
+    DTB_3250_test, DTB_3253_test, DTB_3255_test, DTB_3257_test, DTB_325T_test = DTB_3250_test[indices_test], DTB_3253_test[indices_test], DTB_3255_test[indices_test], DTB_3257_test[indices_test], DTB_325T_test[indices_test]
+    W_filtered_test = W_filtered_1830_test[indices_test]
+
+    x_data_train=np.array([DTB_1830_train, DTB_1833_train, DTB_1835_train, DTB_1837_train, DTB_183T_train, DTB_3250_train, DTB_3253_train, DTB_3255_train, DTB_3257_train, DTB_325T_train]).T
+    x_data_test=np.array([DTB_1830_test, DTB_1833_test, DTB_1835_test, DTB_1837_test, DTB_183T_test, DTB_3250_test, DTB_3253_test, DTB_3255_test, DTB_3257_test, DTB_325T_test]).T
+
+    t=0
+    x_data_pred = (np.array([DTB_1830[t,:,:].reshape(-1,1), DTB_1833[t,:,:].reshape(-1,1), DTB_1835[t,:,:].reshape(-1,1), DTB_1837[t,:,:].reshape(-1,1), DTB_183T[t,:,:].reshape(-1,1), DTB_3250[t,:,:].reshape(-1,1), DTB_3253[t,:,:].reshape(-1,1), DTB_3255[t,:,:].reshape(-1,1), DTB_3257[t,:,:].reshape(-1,1), DTB_325T[t,:,:].reshape(-1,1)]).T)[0]
+    W_filtered_pred = frame['W_at_BT'][t,:,:].reshape(-1,1)
+
+    return x_data_train, W_filtered_train, x_data_test, W_filtered_test, x_data_pred, W_filtered_pred
 
 if __name__ == "__main__":
     frame = extract_data()

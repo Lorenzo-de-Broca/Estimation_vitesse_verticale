@@ -164,16 +164,26 @@ def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, title, t=0, ou
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
     
     # Left plot: Measured velocity
-    im1 = axes[0].imshow(y_data[t, :, :], origin='lower', cmap='viridis', norm=norm_plot)
-    axes[0].imshow(filter[t, :, :], origin='lower', cmap=cmapw, norm=norm)
-    axes[0].set_title(f'Measured velocity at t={t}', fontsize=12)
+    if t == 100:
+        im1 = axes[0].imshow(y_data[:, :], origin='lower', cmap='viridis', norm=norm_plot)
+        axes[0].imshow(filter[0, :, :], origin='lower', cmap=cmapw, norm=norm)
+        axes[0].set_title(f'Measured velocity at t={0}', fontsize=12)
+    else:
+        im1 = axes[0].imshow(y_data[t, :, :], origin='lower', cmap='viridis', norm=norm_plot)
+        axes[0].imshow(filter[t, :, :], origin='lower', cmap=cmapw, norm=norm)
+        axes[0].set_title(f'Measured velocity at t={t}', fontsize=12)
     axes[0].set_xlabel('X')
     axes[0].set_ylabel('Y')
     
     # Right plot: Predicted velocity
-    im2 = axes[1].imshow(y_data_pred[t, :, :], origin='lower', cmap='viridis', norm=norm_plot)
-    axes[1].imshow(filter[t, :, :], origin='lower', cmap=cmapw, norm=norm)
-    axes[1].set_title(f'Predicted velocity at t={t}', fontsize=12)
+    if t == 100:
+        im2 = axes[1].imshow(y_data_pred[:, :], origin='lower', cmap='viridis', norm=norm_plot)
+        axes[1].imshow(filter[0, :, :], origin='lower', cmap=cmapw, norm=norm)
+        axes[1].set_title(f'Predicted velocity at t={0}', fontsize=12)
+    else:
+        im2 = axes[1].imshow(y_data_pred[t, :, :], origin='lower', cmap='viridis', norm=norm_plot)
+        axes[1].imshow(filter[t, :, :], origin='lower', cmap=cmapw, norm=norm)
+        axes[1].set_title(f'Predicted velocity at t={t}', fontsize=12)
     axes[1].set_xlabel('X')
     axes[1].set_ylabel('Y')
     
@@ -196,7 +206,10 @@ def plot_difference_velocity_map(w_data, w_pred_tot, filter, title, t=0, output_
     cmapb, cmapw, norm, norm_plot, norm_pos, norm_strict_pos, cmapb_pos = create_c_maps()
 
     # Create mask for negative values of the product
-    product = w_data[t,:,:]*w_pred_tot[t,:,:]
+    if t==100:
+        product = w_data[:,:]*w_pred_tot[:,:]
+    else:
+        product = w_data[t,:,:]*w_pred_tot[t,:,:]
     strict_negative_mask = np.zeros_like(product)
     strict_negative_mask[product < 0] = 1
     negative_mask = np.zeros_like(product)
@@ -211,18 +224,30 @@ def plot_difference_velocity_map(w_data, w_pred_tot, filter, title, t=0, output_
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
     
     # Left plot: negative_mask with norm_pos
-    axes[0].imshow(w_data[t,:,:], origin='lower', cmap='Spectral', norm=norm_plot, alpha=0.6)
-    axes[0].imshow(product, origin='lower', cmap=cmapb_pos, norm=norm_pos)
-    axes[0].imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapw, norm=norm)
-    axes[0].set_title(f'Product < {eps:.1e} at t={t} (ratio={ratio_negative*100:.2f}%)', fontsize=12)
+    if t == 100:
+        axes[0].imshow(w_data[:,:], origin='lower', cmap='Spectral', norm=norm_plot, alpha=0.6)
+        axes[0].imshow(product, origin='lower', cmap=cmapb_pos, norm=norm_pos)
+        axes[0].imshow(filter[0,:,:]*filter[1,:,:], origin='lower', cmap=cmapw, norm=norm)
+        axes[0].set_title(f'Product < {eps:.1e} at t={0} (ratio={ratio_negative*100:.2f}%)', fontsize=12)
+    else:
+        axes[0].imshow(w_data[t,:,:], origin='lower', cmap='Spectral', norm=norm_plot, alpha=0.6)
+        axes[0].imshow(product, origin='lower', cmap=cmapb_pos, norm=norm_pos)
+        axes[0].imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapw, norm=norm)
+        axes[0].set_title(f'Product < {eps:.1e} at t={t} (ratio={ratio_negative*100:.2f}%)', fontsize=12)
     axes[0].set_xlabel('X')
     axes[0].set_ylabel('Y')
     
     # Right plot: strict_negative_mask with norm_strict_pos
-    im = axes[1].imshow(w_data[t,:,:], origin='lower', cmap='Spectral', norm=norm_plot, alpha=0.6)
-    axes[1].imshow(product, origin='lower', cmap=cmapb_pos, norm=norm_strict_pos)
-    axes[1].imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapw, norm=norm)
-    axes[1].set_title(f'Product < 0 (strictly negative) at t={t} (ratio={ratio_strict_negative*100:.2f}%)', fontsize=12)
+    if t == 100:
+        im = axes[1].imshow(w_data[:,:], origin='lower', cmap='Spectral', norm=norm_plot, alpha=0.6)
+        axes[1].imshow(product, origin='lower', cmap=cmapb_pos, norm=norm_strict_pos)
+        axes[1].imshow(filter[0,:,:]*filter[1,:,:], origin='lower', cmap=cmapw, norm=norm)
+        axes[1].set_title(f'Product < 0 (strictly negative) at t={0} (ratio={ratio_strict_negative*100:.2f}%)', fontsize=12)
+    else:
+        im = axes[1].imshow(w_data[t,:,:], origin='lower', cmap='Spectral', norm=norm_plot, alpha=0.6)
+        axes[1].imshow(product, origin='lower', cmap=cmapb_pos, norm=norm_strict_pos)
+        axes[1].imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapw, norm=norm)
+        axes[1].set_title(f'Product < 0 (strictly negative) at t={t} (ratio={ratio_strict_negative*100:.2f}%)', fontsize=12)
     axes[1].set_xlabel('X')
     axes[1].set_ylabel('Y')
     
@@ -238,4 +263,23 @@ def plot_difference_velocity_map(w_data, w_pred_tot, filter, title, t=0, output_
     plt.show()
     plt.close()
     
+
+def plot_losses(history, score, output_dir='figures'):
+    """Plot training and validation losses over epochs
     
+    Args:
+        history: Keras History object from model training
+        score (float): Final validation score to display in the title
+    """
+    plt.figure(figsize=(12,9))
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    # plt.plot(np.linspace(0, len(loss), len(loss)), loss)
+    plt.plot(np.linspace(0, len(val_loss), len(val_loss)), val_loss)
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.title(f"Evolution de loss et validation_loss au cours des epochs. Validation split=0.4 (score={score:.4f})")  
+    plt.grid()
+    filepath = f'{output_dir}/Evolution_val_loss.png'
+    plt.savefig(filepath, dpi=300)
+    plt.show()

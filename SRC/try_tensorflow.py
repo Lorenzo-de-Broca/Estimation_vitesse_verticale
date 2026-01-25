@@ -50,7 +50,7 @@ DTB_325T = np.array([(frame['aos_325TBT'][t+1,:,:]-frame['aos_325TBT'][t,:,:])/3
 
 #%% sélection d'un sous-échantillon pour accélérer les tests
 np.random.seed(42)
-size = 100000
+size = 10000
 indices_train = np.random.choice(len(DTB_1830_train), size=size, replace=False)
 DTB_1830_train, DTB_1833_train, DTB_1835_train, DTB_1837_train, DTB_183T_train = DTB_1830_train[indices_train], DTB_1833_train[indices_train], DTB_1835_train[indices_train], DTB_1837_train[indices_train], DTB_183T_train[indices_train]
 DTB_3250_train, DTB_3253_train, DTB_3255_train, DTB_3257_train, DTB_325T_train = DTB_3250_train[indices_train], DTB_3253_train[indices_train], DTB_3255_train[indices_train], DTB_3257_train[indices_train], DTB_325T_train[indices_train]
@@ -72,12 +72,12 @@ x_data_train=np.array([DTB_1830_train, DTB_1833_train, DTB_1835_train, DTB_1837_
 x_data_test=np.array([DTB_1830_test, DTB_1833_test, DTB_1835_test, DTB_1837_test, DTB_183T_test, DTB_3250_test, DTB_3253_test, DTB_3255_test, DTB_3257_test, DTB_325T_test]).T
 
 model = keras.Sequential()
-model.add(keras.layers.Dense(units = 200, activation = 'relu', input_shape=x_data_train.shape[1:]))
-model.add(keras.layers.Dense(units = 200, activation = 'relu'))
-model.add(keras.layers.Dense(units = 200, activation = 'relu'))
-model.add(keras.layers.Dense(units = 200, activation = 'relu'))
+model.add(keras.layers.Dense(units = 128, activation = 'relu', input_shape=x_data_train.shape[1:]))
+model.add(keras.layers.Dense(units = 128, activation = 'relu'))
+model.add(keras.layers.Dense(units = 128, activation = 'relu'))
+model.add(keras.layers.Dense(units = 128, activation = 'relu'))
 model.add(keras.layers.Dense(units = 1, activation = 'linear'))
-model.compile(loss='mae', optimizer=tf.optimizers.Adam(learning_rate=1e-5))
+model.compile(loss='mae', optimizer=tf.optimizers.Adam(learning_rate=1e-4))
 # model.compile(optimizer='adam', loss='mse')
 
 # Display the model
@@ -90,11 +90,12 @@ early_stop = EarlyStopping(
     verbose=1                     # Print when stopping
 )
 epochs=5000
-history = model.fit(x_data_train, W_filtered_1830_train, epochs=epochs, verbose=1, validation_data=(x_data_test, W_filtered_1830_test)) #, callbacks=[early_stop])
+history = model.fit(x_data_train, W_filtered_1830_train, epochs=epochs, verbose=1, validation_data=(x_data_test, W_filtered_1830_test), callbacks=[early_stop])
 
 W_predicted = model.predict(x_data_test)
 W_predicted_train = model.predict(x_data_train)
 
+t=0
 W_pred_tot = model.predict((np.array([DTB_1830[t,:,:].reshape(-1,1), DTB_1833[t,:,:].reshape(-1,1), DTB_1835[t,:,:].reshape(-1,1), DTB_1837[t,:,:].reshape(-1,1), DTB_183T[t,:,:].reshape(-1,1), DTB_3250[t,:,:].reshape(-1,1), DTB_3253[t,:,:].reshape(-1,1), DTB_3255[t,:,:].reshape(-1,1), DTB_3257[t,:,:].reshape(-1,1), DTB_325T[t,:,:].reshape(-1,1)]).T)[0])
 w_pred_tot = W_pred_tot.reshape((500,500))
 

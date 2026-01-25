@@ -38,7 +38,10 @@ def test_model(model, X_test, y_test, model_name="Linear Regression"):
         rmse (float): root mean squared error of the model on the test data
     """
     print("X_test shape", X_test.shape)
-    y_pred = model.predict(X_test)
+    if model_name == "Neuronal Network":
+        y_pred = model.predict(X_test)[:,0]
+    else:
+        y_pred = model.predict(X_test)
     print("y_pred shape", y_pred.shape)
     
     # Flatten y_test to 1D if it's 2D to avoid broadcasting issues
@@ -48,7 +51,10 @@ def test_model(model, X_test, y_test, model_name="Linear Regression"):
     rmse = np.sqrt(mean_squared_error(y_test, y_pred))
     residuals = y_test - y_pred
 
-    r2 = model.score(X_test, y_test)
+    if model_name == "Neuronal Network":
+        r2 = model.evaluate(X_test, y_test, verbose=1)
+    else:
+        r2 = model.score(X_test, y_test)
 
     return y_pred, rmse, residuals, r2
 

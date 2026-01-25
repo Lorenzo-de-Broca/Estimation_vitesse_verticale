@@ -7,3 +7,15 @@ n_trees : 2                     # number of trees for Random Forest Regressor
 
 compute_PCA : False              # if random forest is True, it will not compute PCA no matter what
 PCA_components : 5              # if true, compute PCA with this number of components
+
+### Neural Network parameters
+train_ratio : 0.6                 # ratio of data points to use for Neural Network training
+pop_size : 100000                 # number of data points to use for Neural Network training
+
+learning_rate : 0.000001          # learning rate for Neural Network training
+monitor_metric : 'val_loss'      # metric to monitor for early stopping
+nn_epochs : 5000                 # number of epochs for Neural Network training
+nn_early_stopping : True         # if true, use early stopping during Neural Network training
+nn_early_stopping_patience : 70  # patience for early stopping
+
+
