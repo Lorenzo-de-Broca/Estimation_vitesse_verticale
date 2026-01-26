@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from SRC.extract_data import extract_data
+import matplotlib as mpl
 
 def create_convection_filter():
     """creates a filter to avoid convection zones. Mask where TB (183+/-1) is higher than TB (183+/-7).
@@ -13,7 +14,7 @@ def create_convection_filter():
     p7 = np.array(frame['aos_1837BT'][:,:,:])
 
     filter = np.ones(np.shape(p1))
-    filter[p1>p7-20] = 0
+    filter[p1>p7] = 0
 
     filter = filter*(np.ones(np.shape(p1))-np.ma.getmask(frame['W_at_BT']))
 
@@ -51,3 +52,30 @@ def plot_filter():
     fig.suptitle(r'Filter convection 183TBT-183$\pm 7$ BT')
 
 
+def plot_filtered_data():
+    """plots the filtered ΔTB and W_at_BT data.
+    """
+    filter = create_convection_filter()
+    frame = extract_data()
+ 
+    plt.figure(figsize=(12,12))
+    cmapb = mpl.colors.ListedColormap(['None','black','None'])
+    cmapw = mpl.colors.ListedColormap(['None','white','None'])
+    bounds=[-1,-0.1,0.1,1]
+    norm = mpl.colors.BoundaryNorm(bounds, cmapb.N)
+
+    t=0
+
+    # norm1 = mpl.colors.Normalize(vmin=max(frame['W_at_BT'][t,:,:].min(), w_pred_tot[:,:].min()), 
+    #                              vmax=min(frame['W_at_BT'][t,:,:].max(), w_pred_tot[:,:].max()))
+
+    norm1 = mpl.colors.Normalize(vmin=-0.2, vmax=0.2)
+
+    # plt.imshow(frame['W_at_BT'][t,:,:], origin='lower', cmap='Spectral', norm=norm1)
+    plt.imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapb, norm=norm)
+    plt.title(f'W_at_BT at t={t}')
+
+    # plt.savefig('Heatmaps_pred_W, monitor=val_loss,patience=70, 5 couches, learning_rate=1e-5.pdf', dpi=300)
+    cbar = plt.colorbar(plt.imshow(frame['W_at_BT'][t,:,:], origin='lower', cmap='Spectral', norm=norm1), shrink=0.6)
+    cbar.set_label('W_at_BT (mm/hr)')
+    plt.show()
