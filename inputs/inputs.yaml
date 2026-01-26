@@ -1,9 +1,9 @@
-training_ratio : 0.0001
+training_ratio : 0.6
 
 compute_delta_T : False         # if true, train on delta T else on absolute T
 
-compute_random_forest : True    # if true, use Random Forest Regressor else use Multilinear Regression
-n_trees : 2                     # number of trees for Random Forest Regressor
+compute_random_forest : False    # if true, use Random Forest Regressor else use Multilinear Regression
+n_trees : 10                     # number of trees for Random Forest Regressor
 
 compute_PCA : False              # if random forest is True, it will not compute PCA no matter what
 PCA_components : 5              # if true, compute PCA with this number of components

@@ -4,7 +4,7 @@ import numpy as np
 import os
 import sys 
 
-alpha = 0.1
+alpha = 0.01
 eps = -1e-4
 
 def create_c_maps():
@@ -21,8 +21,8 @@ def create_c_maps():
     norm_plot = mpl.colors.Normalize(vmin=-max, vmax=max)
 
     cmapb_pos = mpl.colors.ListedColormap(['black','None'])
-    norm_pos = mpl.colors.BoundaryNorm([-1,eps,1], cmapb_pos.N)
-    norm_strict_pos = mpl.colors.BoundaryNorm([-1,0,1], cmapb_pos.N)
+    norm_pos = mpl.colors.BoundaryNorm([-np.inf,eps,1], cmapb_pos.N)
+    norm_strict_pos = mpl.colors.BoundaryNorm([-np.inf,0,1], cmapb_pos.N)
     
     return cmapb, cmapw, norm, norm_plot, norm_pos, norm_strict_pos, cmapb_pos
 
@@ -147,7 +147,7 @@ def plot_real_velocity_map (y_data, filter, output_dir='figures'):
     #plt.show()
     plt.close()
 
-def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, title, t=0, output_dir='figures'):
+def plot_velocity_comparison(y_data, y_data_pred, filter, title, t=0, output_dir='figures'):
     """Plot measured and predicted velocity maps side by side with a shared colorbar
     
     Args:
@@ -211,7 +211,7 @@ def plot_difference_velocity_map(w_data, w_pred_tot, filter, title, t=0, output_
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
     
     # Left plot: negative_mask with norm_pos
-    axes[0].imshow(w_data[t,:,:], origin='lower', cmap='Spectral', norm=norm_plot, alpha=0.6)
+    axes[0].imshow(w_data[t,:,:], origin='lower', cmap='spectral', norm=norm_plot, alpha=0.6)
     axes[0].imshow(product, origin='lower', cmap=cmapb_pos, norm=norm_pos)
     axes[0].imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapw, norm=norm)
     axes[0].set_title(f'Product < {eps:.1e} at t={t} (ratio={ratio_negative*100:.2f}%)', fontsize=12)
