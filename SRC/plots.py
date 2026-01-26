@@ -4,7 +4,7 @@ import numpy as np
 import os
 import sys 
 
-alpha = 0.1
+alpha = 0.01
 eps = -1e-4
 
 def create_c_maps():
@@ -21,8 +21,8 @@ def create_c_maps():
     norm_plot = mpl.colors.Normalize(vmin=-max, vmax=max)
 
     cmapb_pos = mpl.colors.ListedColormap(['black','None'])
-    norm_pos = mpl.colors.BoundaryNorm([-1,eps,1], cmapb_pos.N)
-    norm_strict_pos = mpl.colors.BoundaryNorm([-1,0,1], cmapb_pos.N)
+    norm_pos = mpl.colors.BoundaryNorm([-np.inf,eps,1], cmapb_pos.N)
+    norm_strict_pos = mpl.colors.BoundaryNorm([-np.inf,0,1], cmapb_pos.N)
     
     return cmapb, cmapw, norm, norm_plot, norm_pos, norm_strict_pos, cmapb_pos
 
@@ -147,7 +147,7 @@ def plot_real_velocity_map (y_data, filter, output_dir='figures'):
     #plt.show()
     plt.close()
 
-def plot_velocity_comparison(x_data, y_data, y_data_pred, filter, title, t=0, output_dir='figures'):
+def plot_velocity_comparison(y_data, y_data_pred, filter, title, t=0, output_dir='figures'):
     """Plot measured and predicted velocity maps side by side with a shared colorbar
     
     Args:

@@ -43,11 +43,16 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
     
     n_trees = config.get("n_trees", 10)  # Default to 10 if not specified
     
+    
+    # Create the title and output directory based on the configuration
     if compute_random_forest :
         title = f"Random_Forest ({n_trees} trees) ({training_ratio*100} % train)"
         output_dir = f"figures/Random_Forest_{n_trees}_trees_{training_ratio*100}_percent_train"
         compute_PCA = False
         model_name = "Random Forest"
+        if compute_delta_T :
+            title = f"Random_Forest_Delta_T ({n_trees} trees) ({training_ratio*100} % train)"
+            output_dir = f"figures/Random_Forest_Delta_T_{n_trees}_trees_{training_ratio*100}_percent_train"
     elif compute_delta_T :
         title = f"Delta_T ({training_ratio*100} % train)"
         output_dir = f"figures/Delta_T_{training_ratio*100}_percent_train"
@@ -165,11 +170,15 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
     print("residuals plotted")
 
     if compute_delta_T :
-        plot_velocity_comparison(x_data, y_data.reshape(87,500,500), y_all_data_pred.reshape(87,500,500), filter, title=title, t=0, output_dir=output_dir)
-        plot_difference_velocity_map(y_data.reshape(87,500,500), y_all_data_pred.reshape(87,500,500), filter, title, output_dir=output_dir)
+        y_data = y_data.reshape(87,500,500)
+        y_all_data_pred = y_all_data_pred.reshape(87,500,500)
+        plot_velocity_comparison(y_data, y_all_data_pred, filter, title=title, t=0, output_dir=output_dir)
+        plot_difference_velocity_map(y_data, y_all_data_pred, filter, title=title, t=0, output_dir=output_dir)
     else :
-        plot_velocity_comparison(x_data, y_data.reshape(88,500,500), y_all_data_pred.reshape(88,500,500), filter, title=title, t=0, output_dir=output_dir)
-        plot_difference_velocity_map(y_data.reshape(88,500,500), y_all_data_pred.reshape(88,500,500), filter, title, output_dir=output_dir)
+        y_data = y_data.reshape(88,500,500)
+        y_all_data_pred = y_all_data_pred.reshape(88,500,500)
+        plot_velocity_comparison(y_data, y_all_data_pred, filter, title=title, t=0, output_dir=output_dir)
+        plot_difference_velocity_map(y_data, y_all_data_pred, filter, title=title, t=0, output_dir=output_dir)
     
 
 def neuronal_network(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
