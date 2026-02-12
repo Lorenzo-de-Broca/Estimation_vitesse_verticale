@@ -1,3 +1,4 @@
+from cProfile import label
 import numpy as np
 import matplotlib.pyplot as plt
 from SRC.extract_data import extract_data
@@ -14,7 +15,7 @@ def create_convection_filter():
     p7 = np.array(frame['aos_1837BT'][:,:,:])
 
     filter = np.ones(np.shape(p1))
-    filter[p1>p7] = 0
+    filter[p1>p7-10] = 0
 
     filter = filter*(np.ones(np.shape(p1))-np.ma.getmask(frame['W_at_BT']))
 
@@ -57,7 +58,7 @@ def plot_filtered_data():
     """
     filter = create_convection_filter()
     frame = extract_data()
- 
+
     plt.figure(figsize=(12,12))
     cmapb = mpl.colors.ListedColormap(['None','black','None'])
     cmapw = mpl.colors.ListedColormap(['None','white','None'])
@@ -71,11 +72,25 @@ def plot_filtered_data():
 
     norm1 = mpl.colors.Normalize(vmin=-0.2, vmax=0.2)
 
-    # plt.imshow(frame['W_at_BT'][t,:,:], origin='lower', cmap='Spectral', norm=norm1)
-    plt.imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapb, norm=norm)
-    plt.title(f'W_at_BT at t={t}')
-
-    # plt.savefig('Heatmaps_pred_W, monitor=val_loss,patience=70, 5 couches, learning_rate=1e-5.pdf', dpi=300)
     cbar = plt.colorbar(plt.imshow(frame['W_at_BT'][t,:,:], origin='lower', cmap='Spectral', norm=norm1), shrink=0.6)
     cbar.set_label('W_at_BT (mm/hr)')
+
+    # plt.imshow(frame['W_at_BT'][t,:,:], origin='lower', cmap='Spectral', norm=norm1)
+    plt.imshow(filter[t,:,:]*filter[t+1,:,:], origin='lower', cmap=cmapb, norm=norm)
+    
+    total_len = 500*500
+    prop_train = 0.6
+    train_matrix, test_matrix = np.zeros((500,500)), np.ones((500,500))
+    train_indexes = np.random.choice(range(500*500), int(prop_train*total_len), replace=False)
+    np.put(train_matrix, train_indexes, 1)
+    np.put(test_matrix, train_indexes, 0)
+    plt.imshow(test_matrix, origin='lower', cmap=cmapw, norm=norm, label='test data points')
+    # plt.imshow(train_matrix, origin='lower', cmap=cmapb, norm=norm, label='training data points')
+    # plt.legend()
+
+    plt.title(rf'W_at_BT at t={t}, filter $(183\pm1)>(183\pm7)-20$, 60\% training data points')
+    # plt.title(rf'training/testing filter')
+
+
+    plt.savefig('183>187-20+training filter (t=0).pdf', dpi=300, format='pdf')
     plt.show()
