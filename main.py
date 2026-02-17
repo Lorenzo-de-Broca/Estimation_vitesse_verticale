@@ -181,7 +181,7 @@ def main(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
         plot_difference_velocity_map(y_data, y_all_data_pred, filter, title=title, t=0, output_dir=output_dir)
     
 
-def neuronal_network(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
+def neural_network(input_file = "inputs/inputs.yaml",paths_file = "inputs/paths.yaml"):
     """
     La fonction qui excécute la régression par réseau de neuronnes pour estimer la vitesse verticale
     """
@@ -252,7 +252,6 @@ def neuronal_network(input_file = "inputs/inputs.yaml",paths_file = "inputs/path
 
     y_train_pred, rmse_train, residuals_train, r2_train = test_model (model, x_data_train, W_filtered_train, model_name="Neuronal Network")
     y_test_pred, rmse_test, residuals_test, r2_test = test_model (model, x_data_test, W_filtered_test, model_name="Neuronal Network")
-    # y_all_data_pred, rmse_all, residuals_all, r2_all = test_model (model, x_data_pred, W_filtered_pred[:,0], model_name="Neuronal Network")
 
     print("Model tested successfully.")
     print(f"RMSE on training set: {rmse_train}")
@@ -282,15 +281,6 @@ def neuronal_network(input_file = "inputs/inputs.yaml",paths_file = "inputs/path
     else :
         plot_velocity_comparison(x_data_all, W_filtered_all, W_predicted_all, filter, title=title, t=100, output_dir=output_dir)
         plot_difference_velocity_map(W_filtered_all.reshape((500,500)), W_predicted_all.reshape((500,500)), filter, title, t=100, output_dir=output_dir)
-
-# x_data, y_data, y_data_pred, filter, title, t, output_dir = x_data_all, W_filtered_all.reshape((500,500)), W_predicted_all.reshape((500,500)), filter, title, 100, output_dir
-
-# model, X_test, y_test, model_name = model, x_data_train, W_filtered_train, "Neuronal Network"
-
-# y_pred, residuals, title, data_set, output_dir = y_train_pred, residuals_train, title, 'train', output_dir
-# y_pred, residuals, title, data_set, output_dir = x_data, y_data.reshape(87,500,500), y_all_data_pred.reshape(87,500,500), filter, title=title, t=0, output_dir=output_dir
-
-# y_data,y_pred,title,R2,rmse,data_set,output_dir = W_filtered_train, W_predicted_train.data, f"Neuronal Network ({pop_size} population) - Train", r2_train, rmse_train, 'train', output_dir
 
 if __name__ == "__main__":
     
