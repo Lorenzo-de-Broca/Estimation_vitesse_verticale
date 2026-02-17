@@ -65,11 +65,9 @@ python main.py --input inputs/inputs.yaml --paths inputs/paths.yaml
 
 #### Option 2 : Réseau de Neurones (TensorFlow)
 
-```bash
-python SRC/try_tensorflow.py
-```
+Pour le réseau de neuronne la fonction **neural_network** se trouve dans le fichier **main.py** et il faut la lancer manuellement dans une console python:
 
-**Note** : Le fichier `try_tensorflow.py` contient du code exploratoire et nécessite une édition manuelle pour changer les paramètres.
+`neural_network()`
 
 ---
 
@@ -80,19 +78,26 @@ python SRC/try_tensorflow.py
 Ce fichier contrôle les paramètres d'entraînement :
 
 ```yaml
-# Rapport d'entraînement (entre 0 et 1)
-training_ratio: 0.0001
+### Linear regressions and Random Forest parameters
+training_ratio : 0.6
 
-# Utiliser ΔT (variations) ou T absolu
-compute_delta_T: False
+compute_delta_T : False            # if true, train on delta T else on absolute T
 
-# Utiliser Random Forest ou Régression Linéaire
-compute_random_forest: True
-n_trees: 2
+compute_random_forest : False      # if true, use Random Forest Regressor else use Multilinear Regression
+n_trees : 10                       # number of trees for Random Forest Regressor
 
-# Appliquer l'Analyse en Composantes Principales (ACP)
-compute_PCA: True
-PCA_components: 5
+compute_PCA : False                # if random forest is True, it will not compute PCA no matter what
+PCA_components : 5                 # if true, compute PCA with this number of components
+
+### Neural Network parameters
+train_ratio : 0.6                  # ratio of data points to use for Neural Network training
+pop_size : 10000                   # number of data points to use for Neural Network training
+
+learning_rate : 0.0001             # learning rate for Neural Network training
+monitor_metric : 'val_loss'        # metric to monitor for early stopping
+nn_epochs : 5000                   # number of epochs for Neural Network training
+nn_early_stopping : True           # if true, use early stopping during Neural Network training
+nn_early_stopping_patience : 70    # patience for early stopping
 ```
 
 ### `inputs/paths.yaml`
@@ -125,10 +130,6 @@ Estimation_vitesse_verticale/
 │   ├── regression.py               # Modèles de régression
 │   ├── plots.py                    # Fonctions de visualisation
 │   ├── utils.py                    # Fonctions utilitaires
-│   ├── sandbox.py                  # Code exploratoire
-│   └── try_tensorflow.py           # Implémentation TensorFlow
-└── 2526/
-    └── MesoNH-ice3_CADDIWAF7_1km_projectHB.nc  # Données
 ```
 
 ---
@@ -249,37 +250,6 @@ Sinon → pas de convection → masque à 1
 
 ---
 
-### ��� `SRC/try_tensorflow.py`
-**Rôle** : Implémentation exploratoire avec réseaux de neurones
-
-**Points clés** :
-- Charge les données comme `main.py`
-- Construit un modèle séquentiel avec couches Dense
-- Entraîne avec early stopping sur la validation loss
-- Génère les mêmes visualisations que les modèles classiques
-- **Nature** : Code de recherche, nécessite édition manuelle pour changer les paramètres
-
-**Architecture modèle** :
-```
-Dense(200, ReLU) → Dense(200, ReLU) → Dense(200, ReLU) 
-→ Dense(200, ReLU) → Dense(1, Linear)
-```
-
----
-
-### ��� `SRC/sandbox.py`
-**Rôle** : Code exploratoire et tests ad-hoc
-
-**Contenu** : 
-- Expérimentations avec scipy.optimize.curve_fit
-- Tests de visualisation
-- Validation de l'extraction de données
-- Essais de différentes combinaisons de filtres
-
-**Note** : Non destiné à la production, plutôt pour le développement.
-
----
-
 ## ��� Flux de Données Typique
 
 ```
@@ -331,10 +301,42 @@ PCA_components: 10
 ```
 
 ### 4️⃣ Réseau de Neurones
-```bash
-# Éditer SRC/try_tensorflow.py directement
-# Modifier les architecture et hyperparamètres
-python SRC/try_tensorflow.py
+
+Dans main.neural_network directement:
+
+`model = keras.Sequential()`
+    `model.add(keras.layers.Dense(units = 128, activation = 'relu', input_shape=x_data_train.shape[1:]))`
+    `model.add(keras.layers.Dense(units = 128, activation = 'relu'))`
+    `model.add(keras.layers.Dense(units = 128, activation = 'relu'))`
+    `model.add(keras.layers.Dense(units = 128, activation = 'relu'))`
+    `model.add(keras.layers.Dense(units = 1, activation = 'linear')`
+
+Et dans **inputs.yaml**:
+
+Pour un test rapide
+
+```yaml
+train_ratio : 0.6                  # ratio of data points to use for Neural Network training
+pop_size : 10000                   # number of data points to use for Neural Network training
+
+learning_rate : 0.0001             # learning rate for Neural Network training
+monitor_metric : 'val_loss'        # metric to monitor for early stopping
+nn_epochs : 5000                   # number of epochs for Neural Network training
+nn_early_stopping : True           # if true, use early stopping during Neural Network training
+nn_early_stopping_patience : 70    # patience for early stopping
+```
+
+Pour les meilleurs résultats présentés ici
+
+```yaml
+train_ratio : 0.6                  # ratio of data points to use for Neural Network training
+pop_size : 100000                  # number of data points to use for Neural Network training
+
+learning_rate : 0.000001           # learning rate for Neural Network training
+monitor_metric : 'val_loss'        # metric to monitor for early stopping
+nn_epochs : 5000                   # number of epochs for Neural Network training
+nn_early_stopping : True           # if true, use early stopping during Neural Network training
+nn_early_stopping_patience : 100   # patience for early stopping
 ```
 
 ---
@@ -357,7 +359,7 @@ Les figures générées dans `figures/` incluent :
 
 - **Données** : Assurez-vous que le fichier netCDF est au bon chemin dans `paths.yaml`
 - **Mémoire** : Avec 88 temps × 500×500 pixels × 10 canaux = ~1.7 GB données brutes
-- **Random Forest** : Peut être très lent avec beaucoup de données, utilisez `training_ratio` bas
+- **Random Forest** : Peut être très lent avec beaucoup de données, utilisez `training_ratio` et `pop_size` bas
 - **ACP** : Réduit la dimensionnalité mais peut perdre l'interprétabilité physique
 
 ---
